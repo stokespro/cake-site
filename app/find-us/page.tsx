@@ -11,16 +11,21 @@ export const metadata: Metadata = {
 export const revalidate = 1800; // Revalidate every 30 minutes
 
 async function getDispensaryLocations(): Promise<DispensaryLocation[]> {
-  const { data, error } = await supabase
-    .from('public_dispensary_locations')
-    .select('*');
+  try {
+    const { data, error } = await supabase
+      .from('public_dispensary_locations')
+      .select('*');
 
-  if (error || !data) {
+    if (error) {
+      console.error('Error fetching locations:', error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
     console.error('Error fetching locations:', error);
     return [];
   }
-
-  return data;
 }
 
 // Group locations by city

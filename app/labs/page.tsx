@@ -21,7 +21,7 @@ async function getLabResults(): Promise<{ strain: Strain; batches: StrainBatch[]
 
   // Get batches for each strain
   const results = await Promise.all(
-    strains.map(async (strain) => {
+    strains.map(async (strain: any) => {
       const { data: batches } = await supabase
         .from('strain_batches')
         .select('*')
