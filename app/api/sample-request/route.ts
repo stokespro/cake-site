@@ -23,9 +23,9 @@ export async function POST(request: NextRequest) {
       .from('customers')
       .select('id, business_name')
       .eq('omma_license', validatedData.omma_license)
-      .single();
+      .maybeSingle();
 
-    let customer_id = null;
+    let customer_id: string | null = null;
     let is_existing_customer = false;
 
     if (existingCustomer && !customerError) {
