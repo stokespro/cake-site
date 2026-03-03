@@ -13,11 +13,10 @@
   --hover-gray: #2A2A2A;
 }
 
-@layer base {
-  body {
-    @apply bg-white text-black;
-    font-feature-settings: 'rlig' 1, 'calt' 1;
-  }
+body {
+  background-color: white;
+  color: black;
+  font-feature-settings: 'rlig' 1, 'calt' 1;
 }
 
 @layer utilities {
@@ -46,7 +45,8 @@
 
 /* Typography enhancements */
 h1, h2, h3, h4, h5, h6 {
-  @apply font-black tracking-tight;
+  font-weight: 900;
+  letter-spacing: -0.025em;
 }
 
 /* Smooth scroll behavior */
