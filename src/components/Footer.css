@@ -1,0 +1,92 @@
+.ftr {
+  border-top: 1px solid var(--line);
+  padding: 5rem var(--gutter) 2rem;
+  background: var(--bg);
+}
+
+.ftr-top {
+  max-width: var(--max);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 4rem;
+  padding-bottom: 4rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.ftr-brand { display: flex; flex-direction: column; gap: 1.5rem; }
+
+.ftr-tag {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--ink-dim);
+  line-height: 1.5;
+  max-width: 22ch;
+}
+
+.ftr-cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2.5rem;
+}
+
+.ftr-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.ftr-col h4 {
+  font-size: 0.65rem;
+  color: var(--ink-faint);
+  margin-bottom: 0.5rem;
+}
+
+.ftr-col a {
+  font-family: var(--display);
+  font-size: 1.05rem;
+  color: var(--ink);
+  transition: color 0.3s ease, transform 0.3s ease;
+  display: inline-block;
+}
+
+.ftr-col a:hover {
+  color: var(--ink-dim);
+  transform: translateX(2px);
+}
+
+.ftr-bottom {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.ftr-legal {
+  display: flex;
+  gap: 2rem;
+  font-size: 0.65rem;
+  color: var(--ink-faint);
+  flex-wrap: wrap;
+}
+
+.ftr-warn {
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  max-width: 90ch;
+  line-height: 1.6;
+  text-transform: none;
+  letter-spacing: 0.04em;
+  font-family: var(--mono);
+}
+
+@media (max-width: 880px) {
+  .ftr-top { grid-template-columns: 1fr; gap: 3rem; }
+  .ftr-cols { grid-template-columns: repeat(2, 1fr); gap: 2rem; }
+}
+@media (max-width: 540px) {
+  .ftr-cols { grid-template-columns: 1fr; }
+}

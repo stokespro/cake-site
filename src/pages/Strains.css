@@ -1,0 +1,105 @@
+.strains-page { padding-top: 6rem; }
+
+.strains-hero {
+  padding: 6rem 0 4rem;
+  border-bottom: 1px solid var(--line);
+  background:
+    radial-gradient(ellipse at 20% 50%, rgba(60, 60, 58, 0.25) 0%, transparent 50%),
+    var(--bg);
+}
+
+.strains-hero-eyebrow {
+  color: var(--ink-faint);
+  margin-bottom: 2rem;
+  display: block;
+}
+
+.strains-hero-title {
+  font-size: clamp(2.75rem, 7vw, 6rem);
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+  margin-bottom: 2rem;
+}
+
+.strains-hero-sub {
+  font-family: var(--display);
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
+  line-height: 1.55;
+  color: var(--ink-dim);
+  max-width: 55ch;
+}
+
+.strains-filter {
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--line);
+  position: sticky;
+  top: 60px;
+  background: rgba(10, 10, 10, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 10;
+}
+
+.strains-filter-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.strains-count {
+  font-size: 0.65rem;
+  color: var(--ink-faint);
+}
+
+.strains-filters {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.strains-filter-btn {
+  font-family: var(--mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  padding: 0.5rem 0;
+  position: relative;
+  transition: color 0.3s ease;
+}
+
+.strains-filter-btn::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 1px;
+  background: var(--ink);
+  transition: width 0.3s ease;
+}
+
+.strains-filter-btn:hover,
+.strains-filter-btn.is-active {
+  color: var(--ink);
+}
+
+.strains-filter-btn.is-active::after { width: 100%; }
+
+.strains-grid-wrap { padding: 5rem 0 8rem; }
+
+.strains-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.75rem;
+}
+
+.strains-skel {
+  aspect-ratio: 3 / 4.5;
+}
+
+@media (max-width: 640px) {
+  .strains-filter-inner { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .strains-filters { flex-wrap: wrap; gap: 1rem; }
+}

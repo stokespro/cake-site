@@ -1,0 +1,331 @@
+.sd-page {
+  padding-top: 6rem;
+  position: relative;
+  min-height: 100vh;
+}
+
+.sd-accent-glow {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 60%;
+  height: 80vh;
+  background: radial-gradient(ellipse at top right, color-mix(in srgb, var(--accent) 25%, transparent), transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.6;
+}
+
+.sd-hero {
+  padding: 4rem 0 5rem;
+  position: relative;
+  z-index: 1;
+  border-bottom: 1px solid var(--line);
+}
+
+.sd-crumb {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--ink-faint);
+  margin-bottom: 4rem;
+}
+
+.sd-crumb a { color: var(--ink-dim); transition: color 0.3s ease; }
+.sd-crumb a:hover { color: var(--ink); }
+
+.sd-grid {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 6rem;
+  align-items: center;
+}
+
+.sd-drop-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 2rem;
+  color: var(--ink);
+}
+
+.sd-drop-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.sd-name {
+  font-size: clamp(3rem, 9vw, 7rem);
+  font-weight: 300;
+  font-style: italic;
+  letter-spacing: -0.04em;
+  line-height: 0.9;
+  margin-bottom: 1.5rem;
+}
+
+.sd-cross {
+  font-family: var(--display);
+  font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+  color: var(--ink-dim);
+  margin-bottom: 3rem;
+}
+
+.sd-quick {
+  border-top: 1px solid var(--line);
+  padding-top: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 480px;
+}
+
+.sd-quick-row {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  align-items: baseline;
+  gap: 1rem;
+}
+
+.sd-quick-row .mono {
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+}
+
+.sd-quick-row > span:last-child {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+/* Right side package */
+.sd-package {
+  position: relative;
+  width: 85%;
+  max-width: 420px;
+  aspect-ratio: 3 / 4;
+  margin: 0 auto;
+}
+
+.sd-package-glow {
+  position: absolute;
+  inset: -25%;
+  background: radial-gradient(circle at 50% 50%, var(--accent) 0%, transparent 55%);
+  opacity: 0.4;
+  filter: blur(40px);
+  animation: drop-pulse 5s ease-in-out infinite;
+}
+
+.sd-package img {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.sd-package-bag {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(160deg, #1d1d1b 0%, #0e0e0d 100%);
+  border-radius: 4px 4px 8px 8px;
+  border: 1px solid var(--line-bright);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.05),
+    0 30px 60px -20px rgba(0,0,0,0.8);
+}
+
+.sd-package-mark {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 1rem;
+  color: var(--ink);
+  opacity: 0.6;
+}
+
+.sd-package-name {
+  font-size: clamp(1.5rem, 3vw, 2.25rem);
+  font-weight: 600;
+  font-style: italic;
+  letter-spacing: -0.02em;
+  text-align: center;
+  line-height: 1.05;
+}
+
+.sd-package-foot {
+  font-size: 0.6rem;
+  color: var(--ink-faint);
+}
+
+/* Body section */
+.sd-body { position: relative; z-index: 1; }
+
+.sd-body-inner {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 5rem;
+  align-items: start;
+}
+
+.sd-section-label {
+  color: var(--ink-faint);
+  margin-bottom: 2rem;
+  display: block;
+}
+
+.sd-story {
+  font-family: var(--display);
+  font-size: clamp(1.1rem, 1.6vw, 1.4rem);
+  line-height: 1.55;
+  color: var(--ink-dim);
+  margin-bottom: 3.5rem;
+  max-width: 56ch;
+}
+
+.sd-callouts {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--line);
+}
+
+.sd-callout .mono {
+  font-size: 0.6rem;
+  color: var(--ink-faint);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.sd-callout-val {
+  font-family: var(--display);
+  font-size: 1rem;
+  color: var(--ink);
+}
+
+.sd-body-right {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  padding-left: 2.5rem;
+  border-left: 1px solid var(--line);
+}
+
+.sd-aside-label {
+  color: var(--ink-faint);
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.sd-effects {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.sd-effect {
+  font-family: var(--display);
+  font-style: italic;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.85rem;
+  border: 1px solid var(--line-bright);
+  color: var(--ink);
+  background: var(--bg-elevated);
+}
+
+.sd-labs-btn {
+  width: 100%;
+  justify-content: space-between;
+}
+
+/* Nav between strains */
+.sd-nav-section {
+  border-top: 1px solid var(--line);
+  padding: 4rem 0;
+  background: var(--bg-elevated);
+}
+
+.sd-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+.sd-nav-link {
+  padding: 2rem;
+  border: 1px solid var(--line);
+  transition: border-color 0.4s ease, background 0.4s ease, transform 0.4s ease;
+  background: var(--bg);
+}
+
+.sd-nav-link:hover {
+  border-color: var(--line-bright);
+  background: var(--bg-card);
+  transform: translateY(-2px);
+}
+
+.sd-nav-prev { text-align: left; }
+.sd-nav-next { text-align: right; }
+
+.sd-nav-link .mono {
+  font-size: 0.6rem;
+  color: var(--ink-faint);
+  margin-bottom: 0.75rem;
+  display: block;
+}
+
+.sd-nav-name {
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-style: italic;
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  margin-bottom: 0.5rem;
+}
+
+.sd-nav-year {
+  font-size: 0.65rem;
+  color: var(--ink-dim);
+}
+
+/* Loading + missing states */
+.sd-loading {
+  padding: 6rem 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+}
+
+.sd-skel-img { aspect-ratio: 3 / 4; }
+.sd-skel-text { height: 400px; }
+
+.sd-missing {
+  padding: 10rem 0;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+}
+
+.sd-missing .mono { color: var(--ink-faint); }
+.sd-missing h1 { font-size: clamp(2rem, 4vw, 3rem); font-weight: 300; }
+
+@media (max-width: 980px) {
+  .sd-grid, .sd-body-inner { grid-template-columns: 1fr; gap: 3rem; }
+  .sd-body-right { padding-left: 0; border-left: none; border-top: 1px solid var(--line); padding-top: 2.5rem; }
+  .sd-callouts { grid-template-columns: 1fr; gap: 1rem; }
+}
+
+@media (max-width: 640px) {
+  .sd-nav { grid-template-columns: 1fr; }
+}

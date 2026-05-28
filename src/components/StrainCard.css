@@ -1,0 +1,209 @@
+.sc {
+  display: block;
+  opacity: 0;
+  animation: rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.sc-frame {
+  position: relative;
+  padding: 2rem 1.5rem 2.5rem;
+  border: 1px solid var(--line);
+  background: linear-gradient(180deg, var(--bg-elevated) 0%, var(--bg) 100%);
+  transition: border-color 0.5s ease, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.sc-frame::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 30%, color-mix(in srgb, var(--accent, #fff) 8%, transparent), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.6s ease;
+  pointer-events: none;
+}
+
+.sc:hover .sc-frame {
+  border-color: var(--line-bright);
+  transform: translateY(-4px);
+}
+.sc:hover .sc-frame::before { opacity: 1; }
+
+.sc-tag {
+  position: absolute;
+  top: 1.25rem;
+  right: 1.25rem;
+  font-size: 0.6rem;
+  letter-spacing: 0.2em;
+  color: var(--ink);
+  padding: 0.4rem 0.7rem;
+  border: 1px solid var(--ink);
+  z-index: 2;
+}
+
+.sc-package {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.75rem;
+  position: relative;
+}
+
+.sc-package img {
+  max-height: 100%;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sc:hover .sc-package img { transform: scale(1.03); }
+
+.sc-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  text-align: center;
+  margin-top: auto;
+}
+
+.sc-num {
+  font-size: 0.6rem;
+  color: var(--ink-faint);
+}
+
+.sc-name {
+  font-size: clamp(1.5rem, 2vw, 1.85rem);
+  font-weight: 300;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  font-style: italic;
+}
+
+.sc-cross {
+  font-family: var(--display);
+  font-size: 0.85rem;
+  color: var(--ink-dim);
+  font-style: italic;
+}
+
+.sc-tail {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+  font-size: 0.62rem;
+  color: var(--ink-faint);
+  margin-top: 0.25rem;
+}
+.sc-dot { opacity: 0.5; }
+
+/* ---- Placeholder package (mylar bag silhouette) ---- */
+.pkg-ph {
+  position: relative;
+  width: 70%;
+  aspect-ratio: 3 / 4;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.sc:hover .pkg-ph { transform: translateY(-4px) rotate(-1deg); }
+
+.pkg-ph-bag {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(160deg, #1d1d1b 0%, #0e0e0d 100%);
+  border-radius: 4px 4px 8px 8px;
+  border: 1px solid var(--line-bright);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.04),
+    0 20px 40px -20px rgba(0,0,0,0.8);
+}
+
+.pkg-ph-glow {
+  position: absolute;
+  inset: -20%;
+  background: radial-gradient(circle at 50% 60%, var(--accent) 0%, transparent 55%);
+  opacity: 0.35;
+  filter: blur(20px);
+}
+
+.pkg-ph-zip {
+  position: absolute;
+  top: 8%;
+  left: 8%;
+  right: 8%;
+  height: 6px;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--line-bright) 0,
+    var(--line-bright) 2px,
+    transparent 2px,
+    transparent 5px
+  );
+  opacity: 0.5;
+}
+
+.pkg-ph-label {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0 1rem;
+}
+
+.pkg-ph-mark {
+  font-family: var(--display);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 0.85rem;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+  opacity: 0.6;
+}
+
+.pkg-ph-strain {
+  font-family: var(--display);
+  font-weight: 600;
+  font-size: clamp(1.1rem, 2vw, 1.45rem);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  line-height: 1.05;
+}
+
+.pkg-ph-grams {
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.25em;
+  color: var(--ink-faint);
+  margin-top: 0.5rem;
+}
+
+.pkg-ph-noise {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.08;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+}
+
+.pkg-ph-shadow {
+  position: absolute;
+  bottom: -10%;
+  left: 10%;
+  right: 10%;
+  height: 12%;
+  background: radial-gradient(ellipse at center, rgba(0,0,0,0.5) 0%, transparent 70%);
+  filter: blur(8px);
+}
