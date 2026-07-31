@@ -48,3 +48,4 @@ Thumbs.db
 check-schema.js
 run-migration.js
 apply-migration.js
+.gstack/
