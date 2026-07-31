@@ -1,0 +1,55 @@
+import Image from 'next/image'
+import Link from 'next/link'
+
+export function SiteFooter() {
+  return (
+    <footer className="border-t border-white/10 bg-ink">
+      <div className="mx-auto max-w-[1600px] px-5 py-14 md:px-10">
+        <div className="flex flex-col gap-10 md:flex-row md:items-start md:justify-between">
+          <div>
+            <div className="relative h-9 w-[84px]">
+              <Image
+                src="/brand/cake-white.webp"
+                alt="CAKE"
+                fill
+                sizes="84px"
+                className="object-contain object-left"
+              />
+            </div>
+            <p className="micro mt-5 text-white/45">GROWN IN OKLAHOMA</p>
+          </div>
+
+          <nav className="grid grid-cols-2 gap-x-12 gap-y-3 sm:grid-cols-3">
+            {[
+              { label: 'STRAINS', href: '#strains' },
+              { label: 'PRODUCTS', href: '#products' },
+              { label: 'WHOLESALE', href: '#order' },
+              { label: 'LABS / COAs', href: '/labs' },
+              { label: 'INSTAGRAM', href: 'https://instagram.com/cakeoklahoma' },
+              { label: 'CONTACT', href: '/contact' },
+            ].map((l) => (
+              <Link
+                key={l.label}
+                href={l.href}
+                className="micro text-white/60 transition-colors hover:text-white"
+              >
+                {l.label}
+              </Link>
+            ))}
+          </nav>
+        </div>
+
+        <div className="mt-14 flex flex-col gap-4 border-t border-white/10 pt-7 md:flex-row md:items-center md:justify-between">
+          <p className="text-[11px] leading-relaxed text-white/35">
+            JTS Manufacturing LLC d/b/a CAKE. For licensed Oklahoma medical marijuana
+            businesses and patients 18+. Keep out of reach of children.
+          </p>
+          <div className="flex gap-7">
+            <span className="micro text-white/45">cakeoklahoma.com</span>
+            <span className="micro text-white/45">@cakeoklahoma</span>
+          </div>
+        </div>
+      </div>
+    </footer>
+  )
+}

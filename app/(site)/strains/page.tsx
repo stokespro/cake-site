@@ -19,7 +19,7 @@ async function getStrains(): Promise<Strain[]> {
   return data || [];
 }
 
-export default async function HomePage() {
+export default async function StrainsPage() {
   const strains = await getStrains();
 
   return (

@@ -1,71 +1,247 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+/* ============================================================
+   DESIGN TOKENS — Tailwind v4 CSS-first config.
+
+   Ported from the landing page's Tailwind v3 `tailwind.config.ts`.
+   This project runs @tailwindcss/postcss v4, where `@tailwind base;`
+   emits nothing at all — the theme has to live here, not in a JS config.
+   ============================================================ */
+@theme {
+  --color-ink: #0a0a0b;
+  --color-smoke: #141416;
+  --color-bone: #f4f1ea;
+  --color-cake: #e8452f;
+  --color-cake-soft: #f26b54;
+
+  /* next/font exposes the Archivo file as --font-archivo (see layout.tsx).
+     It must NOT be called --font-display: that is this theme key, and the
+     reference below would resolve to itself. */
+  --font-display: var(--font-archivo), Impact, sans-serif;
+  --font-body: var(--font-archivo), system-ui, sans-serif;
+
+  --tracking-tightest: -0.045em;
+  --ease-cake: cubic-bezier(0.16, 1, 0.3, 1);
+}
 
 :root {
-  --black: #000000;
-  --white: #FFFFFF;
-  --off-white: #FAFAFA;
-  --dark-gray: #1A1A1A;
-  --mid-gray: #666666;
-  --light-gray: #E5E5E5;
-  --flame-red: #DC2626;
-  --hover-gray: #2A2A2A;
+  --ink: #0a0a0b;
+  --paper: #ffffff;
+  --panel: #f4f4f2;
+  --line: #dcdcd8;
+  --label: #8a8a86;
+}
+
+html {
+  scroll-behavior: smooth;
+  background: var(--ink);
 }
 
 body {
-  background-color: white;
-  color: black;
-  font-feature-settings: 'rlig' 1, 'calt' 1;
+  background: var(--ink);
+  color: #fff;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+/* Light surface for the pre-existing inner pages (about, labs, find-us,
+   partners, contact, request-samples, strains/[slug]). Applied by the
+   (site) route group layout. The landing page is full-bleed dark and
+   deliberately opts out. */
+.site-surface {
+  background: #fff;
+  color: #000;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-/* Typography enhancements */
-h1, h2, h3, h4, h5, h6 {
+/* Scoped to the inner pages only — this was a global h1-h6 rule before and
+   would otherwise fight `.display` on the landing page. */
+.site-surface :is(h1, h2, h3, h4, h5, h6) {
   font-weight: 900;
   letter-spacing: -0.025em;
 }
 
-/* Smooth scroll behavior */
-html {
-  scroll-behavior: smooth;
+/* Archivo variable width axis — matches the wholesale menu's display style
+   (font-weight 900 / font-stretch 118%). */
+.display {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-stretch: 118%;
+  font-variation-settings: 'wdth' 118;
+  text-transform: uppercase;
+  line-height: 0.86;
+  letter-spacing: -0.015em;
 }
 
-/* Animation for page transitions */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
+.display-tight {
+  line-height: 0.82;
+}
+
+.micro {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.vertical-rl {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+}
+
+/* ============================================================
+   STRAIN NAME FIT
+   The name stack must never truncate. Type is sized against its own
+   column (cqw), not the viewport, because the column width depends on
+   the stats column and grid gaps — a vw-based size clipped
+   "BACIO GELATO" / "BUBBLE BATH" between roughly 1280px and 1440px.
+
+   LONGEST_NAME = "BACIO GELATO". MEASURED (not estimated) at 9.21em of
+   advance in Archivo 900 / font-stretch 118% — uppercase display type is
+   far wider per character than it looks. 100 / 9.21 = 10.86cqw is the
+   exact fit; 10.3 leaves ~5% margin for fallback-font metrics.
+
+   If a longer strain name is ever added, re-measure rather than guess:
+     el.scrollWidth / parseFloat(getComputedStyle(el).fontSize)
+   then set --name-fit = 100 / thatValue * 0.95
+   ============================================================ */
+:root {
+  --name-fit: 10.3cqw;
+}
+
+/* ============================================================
+   HOLOGRAPHIC SYSTEM
+   Sampled from the matte-black mylar: silver-iridescent, never
+   saturated. The shimmer is a slow background-position sweep, which
+   stands in for the light-play you get tilting the real bag.
+   Keep these as ACCENTS — the packaging is 95% black, and the holo
+   only earns its impact by being rare.
+   ============================================================ */
+:root {
+  --holo: linear-gradient(
+    115deg,
+    #cfd8f7 0%,
+    #e9c9ee 11%,
+    #f7d9c9 22%,
+    #f3f0c2 33%,
+    #c9eddc 45%,
+    #bfe3f5 57%,
+    #d7cdf6 70%,
+    #efc9e4 84%,
+    #cfd8f7 100%
+  );
+}
+
+@keyframes holo-shift {
+  0% {
+    background-position: 0% 50%;
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  100% {
+    background-position: 200% 50%;
   }
 }
 
-.fade-in {
-  animation: fadeIn 0.5s ease-out;
+/* Iridescent type. Falls back to the bone tone if bg-clip is unsupported. */
+.holo-text {
+  color: #f4f1ea;
+  background: var(--holo);
+  background-size: 200% 100%;
+  animation: holo-shift 9s linear infinite;
+}
+
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+  .holo-text {
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
+}
+
+/* 1px iridescent rule. */
+.holo-rule {
+  background: var(--holo);
+  background-size: 200% 100%;
+  animation: holo-shift 9s linear infinite;
+}
+
+/* Iridescent 1px border via a gradient pad + inner fill. */
+.holo-border {
+  position: relative;
+  background: var(--holo);
+  background-size: 200% 100%;
+  animation: holo-shift 9s linear infinite;
+  padding: 1px;
+}
+.holo-border > * {
+  background: var(--ink);
+  height: 100%;
+  width: 100%;
+}
+.holo-border:hover > * {
+  background: transparent;
+  color: var(--ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .holo-text,
+  .holo-rule,
+  .holo-border {
+    animation: none;
+  }
+}
+
+/* ---- idle state for <HoloLogo>: keeps the foil alive without a pointer
+   (touch devices, or cursor elsewhere). Mirrors the "animated" class in the
+   original Pokemon-card pen. ---- */
+@keyframes holo-idle-tilt {
+  0%,
+  100% {
+    transform: rotateX(5deg) rotateY(-9deg);
+  }
+  25% {
+    transform: rotateX(-4deg) rotateY(6deg);
+  }
+  50% {
+    transform: rotateX(-6deg) rotateY(10deg);
+  }
+  75% {
+    transform: rotateX(3deg) rotateY(-5deg);
+  }
+}
+
+@keyframes holo-idle-bands {
+  0%,
+  100% {
+    background-position: 34% 34%, 66% 34%;
+    filter: brightness(0.7) contrast(1.55) saturate(1.1);
+  }
+  50% {
+    background-position: 66% 66%, 34% 66%;
+    filter: brightness(0.88) contrast(1.7) saturate(1.25);
+  }
+}
+
+@keyframes holo-idle-sparkle {
+  0%,
+  100% {
+    background-position: 12% 18%;
+    filter: brightness(0.85) contrast(1.45);
+  }
+  50% {
+    background-position: 82% 76%;
+    filter: brightness(1.15) contrast(1.6);
+  }
+}
+
+/* Respect reduced-motion: scroll-linked transforms collapse to static states. */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+::selection {
+  background: #e8452f;
+  color: #fff;
 }

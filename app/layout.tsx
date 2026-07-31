@@ -1,18 +1,41 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import localFont from 'next/font/local';
 import './globals.css';
-import { Sidebar } from '@/components/Sidebar';
-import { MobileNav } from '@/components/MobileNav';
 
-const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
+/**
+ * Archivo is the typeface already used on the CAKE wholesale menu.
+ *
+ * The `wdth` axis MUST be present — `.display` in globals.css sets
+ * font-stretch: 118% to match the menu master, and a static Archivo silently
+ * ignores it. Do not "simplify" this to a weight-only font.
+ *
+ * Self-hosted (Fontsource's Archivo Variable, subset to Latin + the punctuation
+ * this site actually uses, 90KB -> 51KB) so the page makes zero third-party
+ * requests.
+ *
+ * The CSS variable is `--font-archivo`, NOT `--font-display`: the latter is a
+ * Tailwind v4 `@theme` key in globals.css, and pointing it at itself would
+ * resolve to nothing.
+ */
+const archivo = localFont({
+  src: [{ path: './fonts/archivo-subset.woff2', weight: '100 900', style: 'normal' }],
+  variable: '--font-archivo',
+  display: 'swap',
+  declarations: [{ prop: 'font-stretch', value: '62% 125%' }],
+});
 
 export const metadata: Metadata = {
-  title: 'CAKE Oklahoma | Premium Cannabis Cultivator',
-  description: 'Premium craft cannabis. Bold, clean, uncompromising. Oklahoma OMMA licensed cultivator.',
-  keywords: ['cannabis', 'Oklahoma', 'CAKE', 'cultivator', 'premium', 'dispensary'],
+  title: 'CAKE — Indoor Craft Flower, Grown in Oklahoma',
+  description:
+    'Eight indoor strains. Hand-selected A-grade buds, full-panel lab tested, seed-to-sale tracked. Wholesale flower for Oklahoma dispensaries.',
+  keywords: ['cannabis', 'Oklahoma', 'CAKE', 'cultivator', 'premium', 'dispensary', 'wholesale'],
+  metadataBase: new URL('https://cakeoklahoma.com'),
   openGraph: {
-    title: 'CAKE Oklahoma',
-    description: 'Premium craft cannabis cultivator in Oklahoma',
+    title: 'CAKE — Indoor Craft Flower, Grown in Oklahoma',
+    description:
+      'Eight indoor strains. Hand-selected A-grade buds, full-panel lab tested, seed-to-sale tracked.',
+    url: 'https://cakeoklahoma.com',
+    siteName: 'CAKE',
     type: 'website',
   },
 };
@@ -23,23 +46,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${inter.variable} antialiased bg-white`}>
-        {/* Desktop Sidebar */}
-        <div className="hidden lg:block">
-          <Sidebar />
-        </div>
-
-        {/* Mobile Navigation */}
-        <MobileNav />
-
-        {/* Main Content */}
-        <main className="lg:ml-72 min-h-screen">
-          <div className="pt-16 lg:pt-0">
-            {children}
-          </div>
-        </main>
-      </body>
+    <html lang="en" className={`${archivo.variable} ${archivo.className}`}>
+      <body>{children}</body>
     </html>
   );
 }
