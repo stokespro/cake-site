@@ -13,6 +13,11 @@ export const revalidate = 1800; // Revalidate every 30 minutes
 /**
  * Reads the dispensary view with the SERVICE ROLE, not the anon client.
  *
+ * The view derives its rows from CRM state — active customers who have placed
+ * an order (customers.has_orders, kept in sync by triggers on orders), plus
+ * anyone force-included via show_on_map, minus explicit hide_from_map opt-outs.
+ * Nothing here needs maintaining: a dispensary appears after its first order.
+ *
  * `public_dispensary_locations` is defined with `security_invoker = on`, so it
  * runs with the caller's permissions rather than the owner's. The anon role has
  * no privilege on the underlying `customers` table — deliberately, since that
@@ -129,31 +134,10 @@ export default async function FindUsPage() {
                             </div>
                           )}
 
-                          {location.phone && (
+                          {location.omma_license && (
                             <div>
-                              <dt className="micro text-white/35">PHONE</dt>
-                              <dd className="mt-1">
-                                <a
-                                  href={`tel:${location.phone}`}
-                                  className="text-white transition-colors hover:text-cake"
-                                >
-                                  {location.phone}
-                                </a>
-                              </dd>
-                            </div>
-                          )}
-
-                          {location.email && (
-                            <div>
-                              <dt className="micro text-white/35">EMAIL</dt>
-                              <dd className="mt-1">
-                                <a
-                                  href={`mailto:${location.email}`}
-                                  className="text-white transition-colors hover:text-cake"
-                                >
-                                  {location.email}
-                                </a>
-                              </dd>
+                              <dt className="micro text-white/35">OMMA LICENCE</dt>
+                              <dd className="mt-1 tabular-nums">{location.omma_license}</dd>
                             </div>
                           )}
                         </dl>

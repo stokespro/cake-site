@@ -62,12 +62,17 @@ export interface Customer {
   show_on_map?: boolean;
 }
 
+/**
+ * Shape of the public_dispensary_locations view.
+ *
+ * No phone or email: most order-placing customers have a personal email domain
+ * on file (the buyer's own address, not a store contact), so the view exposes
+ * only what a consumer needs to find the store.
+ */
 export interface DispensaryLocation {
   dispensary_name: string;
   address: string | null;
   city: string | null;
-  phone: string | null;
-  email: string | null;
   omma_license: string | null;
 }
 
