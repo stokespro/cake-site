@@ -23,7 +23,7 @@ export default async function StrainsPage() {
   const strains = await getStrains();
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white text-black">
       {/* Hero Section */}
       <section className="px-6 py-20 lg:px-12 lg:py-32 border-b border-gray-200">
         <div className="max-w-4xl">

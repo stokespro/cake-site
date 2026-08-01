@@ -21,12 +21,18 @@ export function SiteFooter() {
 
           <nav className="grid grid-cols-2 gap-x-12 gap-y-3 sm:grid-cols-3">
             {[
-              { label: 'STRAINS', href: '#strains' },
-              { label: 'PRODUCTS', href: '#products' },
-              { label: 'WHOLESALE', href: '#order' },
+              // Landing-page sections are "/#anchor", not "#anchor" — the footer
+              // renders on every route, and a bare anchor is a no-op off the
+              // homepage.
+              { label: 'STRAINS', href: '/strains' },
+              { label: 'PRODUCTS', href: '/#products' },
+              { label: 'WHOLESALE', href: '/#order' },
               { label: 'LABS / COAs', href: '/labs' },
-              { label: 'INSTAGRAM', href: 'https://instagram.com/cakeoklahoma' },
+              { label: 'FIND US', href: '/find-us' },
+              { label: 'ABOUT', href: '/about' },
+              { label: 'H&G NUTRIENTS', href: '/partners' },
               { label: 'CONTACT', href: '/contact' },
+              { label: 'INSTAGRAM', href: 'https://instagram.com/cakeoklahoma' },
             ].map((l) => (
               <Link
                 key={l.label}

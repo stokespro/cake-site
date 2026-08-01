@@ -45,17 +45,14 @@ body {
   overflow-x: hidden;
 }
 
-/* Light surface for the pre-existing inner pages (about, labs, find-us,
-   partners, contact, request-samples, strains/[slug]). Applied by the
-   (site) route group layout. The landing page is full-bleed dark and
-   deliberately opts out. */
-.site-surface {
-  background: #fff;
-  color: #000;
-}
+/* Content-page wrapper (the (site) route group). Deliberately sets no
+   background: each page owns its own, so pages still on the original light
+   treatment (bg-white) and pages converted to the dark design system (bg-ink)
+   can coexist during the visual pass.
 
-/* Scoped to the inner pages only — this was a global h1-h6 rule before and
-   would otherwise fight `.display` on the landing page. */
+   The heading rule was a global h1-h6 before and would otherwise fight
+   `.display` on the landing page, so it stays scoped here. `.display` is a
+   class and still wins wherever a converted page uses it. */
 .site-surface :is(h1, h2, h3, h4, h5, h6) {
   font-weight: 900;
   letter-spacing: -0.025em;

@@ -200,7 +200,7 @@ export function StrainScroller() {
               SCROLL
             </span>
             <Link
-              href="#products"
+              href="/strains"
               className="micro group inline-flex items-center gap-3"
               style={{ color: theme.fg }}
             >

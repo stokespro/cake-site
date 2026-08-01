@@ -1,18 +1,17 @@
-import { Sidebar } from '@/components/Sidebar';
-import { MobileNav } from '@/components/MobileNav';
+import { SiteNav } from '@/components/site-nav';
+import { SiteFooter } from '@/components/site-footer';
 
 /**
- * Chrome for the content pages (about, labs, find-us, partners, contact,
- * request-samples, strains/[slug]).
+ * Shared chrome for the content pages. Identical to the landing page's header
+ * and footer so the whole site reads as one thing — this replaced the old
+ * fixed 288px Sidebar + MobileNav pair.
  *
- * This used to live in the root layout, which meant the marketing landing page
- * inherited a 288px sidebar offset. That breaks it: its pinned sections are
- * sized in `svh` against the full viewport, and the strain-name type is sized
- * in `cqw` against its own column, so narrowing the column silently reclaims
- * the truncation bug that `--name-fit` exists to prevent.
+ * Surface-neutral on purpose: each page owns its own background. Pages still
+ * on the original light treatment set `bg-white` on their own root, and
+ * converted pages set `bg-ink`, so the two can coexist while the visual pass
+ * works through them one at a time.
  *
- * `site-surface` restores the white/black treatment these pages were written
- * against — the root <body> is now the landing page's ink background.
+ * `pt-[71px]` clears the fixed header (68px bar + the 3px holo hairline).
  */
 export default function SiteLayout({
   children,
@@ -21,18 +20,9 @@ export default function SiteLayout({
 }>) {
   return (
     <div className="site-surface">
-      {/* Desktop Sidebar */}
-      <div className="hidden lg:block">
-        <Sidebar />
-      </div>
-
-      {/* Mobile Navigation */}
-      <MobileNav />
-
-      {/* Main Content */}
-      <main className="lg:ml-72 min-h-screen">
-        <div className="pt-16 lg:pt-0">{children}</div>
-      </main>
+      <SiteNav />
+      <main className="min-h-screen pt-[71px]">{children}</main>
+      <SiteFooter />
     </div>
   );
 }

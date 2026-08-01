@@ -43,7 +43,7 @@ export default async function LabsPage() {
   const labResults = await getLabResults();
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white text-black">
       {/* Hero */}
       <section className="px-6 py-20 lg:px-12 lg:py-32">
         <div className="max-w-4xl mx-auto">

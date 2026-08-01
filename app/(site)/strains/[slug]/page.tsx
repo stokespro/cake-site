@@ -44,7 +44,7 @@ export default async function StrainDetailPage({
   const currentBatch = batches[0]; // Most recent batch
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white text-black">
       {/* Back Link */}
       <div className="px-6 py-6 lg:px-12 border-b">
         <Link
