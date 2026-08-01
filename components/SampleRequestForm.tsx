@@ -1,7 +1,6 @@
 'use client';
 
-import { useState, Suspense } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -23,6 +22,11 @@ interface SampleRequestFormProps {
   strains: Strain[];
   preselectedStrain?: string;
 }
+
+const FIELD =
+  'w-full border border-white/20 bg-white/[0.04] px-4 py-3 text-white placeholder:text-white/25 outline-none transition-colors focus:border-white/60';
+const LABEL = 'micro mb-2 block text-white/45';
+const ERROR = 'mt-2 text-sm text-cake-soft';
 
 export function SampleRequestForm({ strains, preselectedStrain }: SampleRequestFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -59,190 +63,181 @@ export function SampleRequestForm({ strains, preselectedStrain }: SampleRequestF
 
       setSubmitStatus('success');
       reset();
-      
+
       // Scroll to success message
       setTimeout(() => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
       }, 100);
-
     } catch (error) {
       console.error('Submit error:', error);
       setSubmitStatus('error');
-    } finally {
-      setIsSubmitting(false);
     }
+    setIsSubmitting(false);
   };
 
   return (
     <div>
       {/* Success Message */}
       {submitStatus === 'success' && (
-        <div className="mb-8 p-6 bg-green-50 border-2 border-green-600 rounded-lg">
-          <h3 className="text-2xl font-bold text-green-900 mb-2">
-            Request Received!
-          </h3>
-          <p className="text-green-800">
-            Thanks for your interest in CAKE products. We'll reach out within 24 hours 
-            to arrange your samples.
-          </p>
+        <div className="holo-border mb-10">
+          <div className="p-7">
+            <h3 className="display text-2xl text-white">Request Received</h3>
+            <p className="mt-3 max-w-[52ch] leading-relaxed text-white/70">
+              Thanks for your interest in CAKE products. We&apos;ll reach out within 24
+              hours to arrange your samples.
+            </p>
+          </div>
         </div>
       )}
 
       {/* Error Message */}
       {submitStatus === 'error' && (
-        <div className="mb-8 p-6 bg-red-50 border-2 border-red-600 rounded-lg">
-          <h3 className="text-2xl font-bold text-red-900 mb-2">
-            Something Went Wrong
-          </h3>
-          <p className="text-red-800">
-            Please try again or contact us directly at the information below.
+        <div className="mb-10 border border-cake/60 bg-cake/10 p-7">
+          <h3 className="display text-2xl text-white">Something Went Wrong</h3>
+          <p className="mt-3 max-w-[52ch] leading-relaxed text-white/70">
+            Please try again, or contact us directly using the information below.
           </p>
         </div>
       )}
 
       {/* Form */}
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-9">
         {/* Contact Information */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
-            <label htmlFor="contact_name" className="block text-sm font-bold mb-2">
-              Your Name *
+            <label htmlFor="contact_name" className={LABEL}>
+              YOUR NAME *
             </label>
             <input
               {...register('contact_name')}
               type="text"
               id="contact_name"
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded focus:border-black outline-none transition-colors"
+              className={FIELD}
               placeholder="John Smith"
             />
-            {errors.contact_name && (
-              <p className="mt-1 text-sm text-red-600">{errors.contact_name.message}</p>
-            )}
+            {errors.contact_name && <p className={ERROR}>{errors.contact_name.message}</p>}
           </div>
 
           <div>
-            <label htmlFor="dispensary_name" className="block text-sm font-bold mb-2">
-              Dispensary Name *
+            <label htmlFor="dispensary_name" className={LABEL}>
+              DISPENSARY NAME *
             </label>
             <input
               {...register('dispensary_name')}
               type="text"
               id="dispensary_name"
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded focus:border-black outline-none transition-colors"
+              className={FIELD}
               placeholder="Your Dispensary Name"
             />
             {errors.dispensary_name && (
-              <p className="mt-1 text-sm text-red-600">{errors.dispensary_name.message}</p>
+              <p className={ERROR}>{errors.dispensary_name.message}</p>
             )}
           </div>
         </div>
 
         {/* OMMA License */}
         <div>
-          <label htmlFor="omma_license" className="block text-sm font-bold mb-2">
-            OMMA License Number *
+          <label htmlFor="omma_license" className={LABEL}>
+            OMMA LICENSE NUMBER *
           </label>
           <input
             {...register('omma_license')}
             type="text"
             id="omma_license"
-            className="w-full px-4 py-3 border-2 border-gray-300 rounded focus:border-black outline-none transition-colors"
+            className={FIELD}
             placeholder="DAAA-XXXX-XXXX"
           />
-          {errors.omma_license && (
-            <p className="mt-1 text-sm text-red-600">{errors.omma_license.message}</p>
-          )}
-          <p className="mt-1 text-sm text-gray-600">
-            We'll use this to check if you're already in our system
+          {errors.omma_license && <p className={ERROR}>{errors.omma_license.message}</p>}
+          <p className="mt-2 text-sm text-white/45">
+            We&apos;ll use this to check if you&apos;re already in our system.
           </p>
         </div>
 
         {/* Email and Phone */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
-            <label htmlFor="email" className="block text-sm font-bold mb-2">
-              Email *
+            <label htmlFor="email" className={LABEL}>
+              EMAIL *
             </label>
             <input
               {...register('email')}
               type="email"
               id="email"
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded focus:border-black outline-none transition-colors"
+              className={FIELD}
               placeholder="you@dispensary.com"
             />
-            {errors.email && (
-              <p className="mt-1 text-sm text-red-600">{errors.email.message}</p>
-            )}
+            {errors.email && <p className={ERROR}>{errors.email.message}</p>}
           </div>
 
           <div>
-            <label htmlFor="phone" className="block text-sm font-bold mb-2">
-              Phone *
+            <label htmlFor="phone" className={LABEL}>
+              PHONE *
             </label>
             <input
               {...register('phone')}
               type="tel"
               id="phone"
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded focus:border-black outline-none transition-colors"
+              className={FIELD}
               placeholder="(555) 123-4567"
             />
-            {errors.phone && (
-              <p className="mt-1 text-sm text-red-600">{errors.phone.message}</p>
-            )}
+            {errors.phone && <p className={ERROR}>{errors.phone.message}</p>}
           </div>
         </div>
 
         {/* Strain Selection */}
         <div>
-          <label className="block text-sm font-bold mb-4">
-            Which strains are you interested in? * (Select all that apply)
-          </label>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {strains.map((strain) => (
-              <label
-                key={strain.id}
-                className="flex items-start p-4 border-2 border-gray-300 rounded cursor-pointer hover:border-black transition-colors"
-              >
-                <input
-                  {...register('strain_slugs')}
-                  type="checkbox"
-                  value={strain.slug}
-                  className="mt-1 mr-3"
-                />
-                <div>
-                  <div className="font-bold">{strain.name}</div>
-                  <div className="text-sm text-gray-600">{strain.type}</div>
-                </div>
-              </label>
-            ))}
-          </div>
-          {errors.strain_slugs && (
-            <p className="mt-2 text-sm text-red-600">{errors.strain_slugs.message}</p>
+          <span className={LABEL}>WHICH STRAINS ARE YOU INTERESTED IN? * (SELECT ALL)</span>
+          {strains.length === 0 ? (
+            <p className="border border-white/15 px-4 py-5 text-white/50">
+              Strain list is unavailable right now — tell us what you&apos;re after in the
+              notes below and we&apos;ll follow up.
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+              {strains.map((strain) => (
+                <label
+                  key={strain.id}
+                  className="flex cursor-pointer items-start border border-white/15 p-4 transition-colors hover:border-white/45"
+                >
+                  <input
+                    {...register('strain_slugs')}
+                    type="checkbox"
+                    value={strain.slug}
+                    className="mr-3 mt-1 accent-cake"
+                  />
+                  <span>
+                    <span className="display block text-base text-white">{strain.name}</span>
+                    <span className="micro mt-1 block text-white/40">{strain.type}</span>
+                  </span>
+                </label>
+              ))}
+            </div>
           )}
+          {errors.strain_slugs && <p className={ERROR}>{errors.strain_slugs.message}</p>}
         </div>
 
         {/* Additional Notes */}
         <div>
-          <label htmlFor="notes" className="block text-sm font-bold mb-2">
-            Additional Notes (Optional)
+          <label htmlFor="notes" className={LABEL}>
+            ADDITIONAL NOTES (OPTIONAL)
           </label>
           <textarea
             {...register('notes')}
             id="notes"
             rows={4}
-            className="w-full px-4 py-3 border-2 border-gray-300 rounded focus:border-black outline-none transition-colors"
+            className={FIELD}
             placeholder="Any additional information or questions..."
           />
         </div>
 
-        {/* Submit Button */}
-        <div>
+        {/* Submit */}
+        <div className="holo-border w-full sm:w-auto sm:inline-block">
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-red-600 text-white py-4 px-6 rounded font-bold text-lg hover:bg-red-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-colors"
+            className="micro w-full px-9 py-5 text-white transition-colors duration-300 hover:!bg-transparent hover:text-ink disabled:cursor-not-allowed disabled:text-white/40 disabled:hover:!bg-ink disabled:hover:text-white/40"
           >
-            {isSubmitting ? 'Submitting...' : 'Request Samples'}
+            {isSubmitting ? 'SUBMITTING…' : 'REQUEST SAMPLES'}
           </button>
         </div>
       </form>

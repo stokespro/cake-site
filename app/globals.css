@@ -45,18 +45,10 @@ body {
   overflow-x: hidden;
 }
 
-/* Content-page wrapper (the (site) route group). Deliberately sets no
-   background: each page owns its own, so pages still on the original light
-   treatment (bg-white) and pages converted to the dark design system (bg-ink)
-   can coexist during the visual pass.
-
-   The heading rule was a global h1-h6 before and would otherwise fight
-   `.display` on the landing page, so it stays scoped here. `.display` is a
-   class and still wins wherever a converted page uses it. */
-.site-surface :is(h1, h2, h3, h4, h5, h6) {
-  font-weight: 900;
-  letter-spacing: -0.025em;
-}
+/* Every page now sets its own background and uses `.display` for headings, so
+   the light-surface scaffolding that carried the content pages through the
+   visual conversion is gone. Headings inherit from `.display`, not a global
+   element rule that would fight it. */
 
 /* Archivo variable width axis — matches the wholesale menu's display style
    (font-weight 900 / font-stretch 118%). */

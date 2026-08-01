@@ -45,7 +45,13 @@ export default function AboutPage() {
       {/* Hero */}
       <section className="mx-auto max-w-[1600px] px-5 py-24 md:px-10 md:py-32">
         <span className="micro holo-text">ABOUT CAKE</span>
-        <h1 className="display display-tight mt-6 max-w-[16ch] text-[clamp(2.8rem,8vw,7rem)] text-white">
+        {/* Clamp floor is 2.2rem, not the 2.8rem the other pages use:
+            "Agriculture" MEASURED at 8.89em of advance in Archivo 900 /
+            font-stretch 118%, so at 2.8rem it is 398px against the 350px
+            available at a 390px viewport and pushes the page sideways.
+            2.2rem -> 313px. Re-measure before raising it:
+              el.scrollWidth / parseFloat(getComputedStyle(el).fontSize) */}
+        <h1 className="display display-tight mt-6 max-w-[16ch] text-[clamp(2.2rem,8vw,7rem)] text-white">
           Artistry in Agriculture
         </h1>
         <p className="mt-8 max-w-[54ch] text-lg leading-relaxed text-white/70 md:text-xl">

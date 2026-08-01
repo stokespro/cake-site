@@ -1,6 +1,14 @@
+import { Metadata } from 'next';
+import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 import { Strain } from '@/lib/types';
 import { StrainCard } from '@/components/StrainCard';
+
+export const metadata: Metadata = {
+  title: 'Strains | CAKE Oklahoma',
+  description:
+    'The full CAKE genetics library. Indoor craft flower, hand-selected and full-panel lab tested.',
+};
 
 export const revalidate = 3600; // Revalidate every hour
 
@@ -23,57 +31,63 @@ export default async function StrainsPage() {
   const strains = await getStrains();
 
   return (
-    <div className="min-h-screen bg-white text-black">
-      {/* Hero Section */}
-      <section className="px-6 py-20 lg:px-12 lg:py-32 border-b border-gray-200">
-        <div className="max-w-4xl">
-          <h1 className="text-6xl lg:text-8xl font-black leading-none mb-6">
-            Premium Genetics
-          </h1>
-          <p className="text-xl lg:text-2xl text-gray-600 leading-relaxed">
-            Curated cannabis cultivated with precision. Every strain is hand-selected 
-            for excellence. See our full genetics library below.
+    <div className="min-h-screen bg-ink">
+      {/* Hero */}
+      <section className="mx-auto max-w-[1600px] px-5 py-24 md:px-10 md:py-32">
+        <span className="micro holo-text">GENETICS LIBRARY</span>
+        <h1 className="display display-tight mt-6 max-w-[14ch] text-[clamp(2.8rem,8vw,7rem)] text-white">
+          Premium Genetics
+        </h1>
+        <p className="mt-8 max-w-[54ch] text-lg leading-relaxed text-white/70 md:text-xl">
+          Curated cannabis cultivated with precision. Every strain is hand-selected for
+          excellence.
+        </p>
+        {strains.length > 0 && (
+          <p className="micro mt-9 text-white/40">
+            {String(strains.length).padStart(2, '0')} STRAINS IN ROTATION
           </p>
-        </div>
+        )}
       </section>
 
-      {/* Vertical Strain Menu */}
-      <section className="px-6 py-12 lg:px-12 lg:py-20">
-        <div className="max-w-7xl mx-auto space-y-8">
-          {strains.length === 0 ? (
-            <div className="text-center py-20">
-              <p className="text-2xl text-gray-600">
-                Our genetics library is coming soon.
-              </p>
-              <p className="mt-4 text-gray-500">
-                Check back soon for our full strain lineup.
-              </p>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-              {strains.map((strain) => (
-                <StrainCard key={strain.id} strain={strain} />
-              ))}
-            </div>
-          )}
-        </div>
+      {/* Strain Grid */}
+      <section className="mx-auto max-w-[1600px] px-5 pb-24 md:px-10">
+        <div className="holo-rule h-px w-full" style={{ opacity: 0.5 }} />
+        {strains.length === 0 ? (
+          <div className="mt-10 border border-white/10 px-6 py-20 text-center">
+            <p className="display text-2xl text-white">Our genetics library is coming soon</p>
+            <p className="mt-4 text-white/55">
+              Check back soon for our full strain lineup.
+            </p>
+          </div>
+        ) : (
+          <div className="mt-10 grid grid-cols-1 gap-4 lg:grid-cols-2">
+            {strains.map((strain) => (
+              <StrainCard key={strain.id} strain={strain} />
+            ))}
+          </div>
+        )}
       </section>
 
-      {/* CTA Section */}
-      <section className="px-6 py-20 lg:px-12 bg-black text-white">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl lg:text-6xl font-black mb-6">
+      {/* CTA */}
+      <section className="bg-smoke">
+        <div className="mx-auto max-w-[1600px] px-5 py-24 md:px-10">
+          <h2 className="display display-tight max-w-[16ch] text-[clamp(2rem,5vw,4rem)] text-white">
             Want to Carry CAKE?
           </h2>
-          <p className="text-xl text-gray-300 mb-8">
+          <p className="mt-6 max-w-[48ch] text-lg leading-relaxed text-white/70">
             Request samples and connect with our sales team.
           </p>
-          <a
-            href="/request-samples"
-            className="inline-block bg-red-600 text-white px-8 py-4 rounded font-bold text-lg hover:bg-red-700 transition-colors"
-          >
-            Request Samples
-          </a>
+          <div className="holo-border mt-10 inline-block">
+            <Link
+              href="/request-samples"
+              className="micro group inline-flex items-center gap-3 px-9 py-5 text-white transition-colors duration-300 hover:!bg-transparent hover:text-ink"
+            >
+              REQUEST SAMPLES
+              <span className="transition-transform duration-300 group-hover:translate-x-1">
+                →
+              </span>
+            </Link>
+          </div>
         </div>
       </section>
     </div>

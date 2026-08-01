@@ -31,7 +31,7 @@ async function getDispensaryLocations(): Promise<DispensaryLocation[]> {
 // Group locations by city
 function groupByCity(locations: DispensaryLocation[]): Map<string, DispensaryLocation[]> {
   const grouped = new Map<string, DispensaryLocation[]>();
-  
+
   locations.forEach((location) => {
     const city = location.city || 'Other';
     if (!grouped.has(city)) {
@@ -49,148 +49,166 @@ export default async function FindUsPage() {
   const cities = Array.from(locationsByCity.keys()).sort();
 
   return (
-    <div className="min-h-screen bg-white text-black">
+    <div className="min-h-screen bg-ink">
       {/* Hero */}
-      <section className="px-6 py-20 lg:px-12 lg:py-32">
-        <div className="max-w-4xl mx-auto">
-          <h1 className="text-6xl lg:text-8xl font-black leading-none mb-8">
-            Find CAKE
-          </h1>
-          <p className="text-2xl lg:text-3xl text-gray-600 leading-relaxed">
-            Discover premium dispensaries carrying CAKE products across Oklahoma.
-          </p>
-        </div>
+      <section className="mx-auto max-w-[1600px] px-5 py-24 md:px-10 md:py-32">
+        <span className="micro holo-text">WHERE TO BUY</span>
+        <h1 className="display display-tight mt-6 max-w-[14ch] text-[clamp(2.8rem,8vw,7rem)] text-white">
+          Find CAKE
+        </h1>
+        <p className="mt-8 max-w-[54ch] text-lg leading-relaxed text-white/70 md:text-xl">
+          Discover premium dispensaries carrying CAKE products across Oklahoma.
+        </p>
       </section>
 
       {/* Dispensary List */}
-      <section className="px-6 py-12 lg:px-12">
-        <div className="max-w-6xl mx-auto">
-          {locations.length === 0 ? (
-            <div className="text-center py-20 bg-gray-50 rounded-lg">
-              <h2 className="text-3xl font-black mb-4">
+      <section className="mx-auto max-w-[1600px] px-5 pb-24 md:px-10">
+        {locations.length === 0 ? (
+          <div className="holo-border">
+            <div className="px-6 py-20 text-center">
+              <h2 className="display text-[clamp(1.6rem,3vw,2.4rem)] text-white">
                 New Partnerships Coming Soon
               </h2>
-              <p className="text-xl text-gray-600 mb-8">
-                We're expanding our retail network. Interested in carrying CAKE?
+              <p className="mx-auto mt-5 max-w-[46ch] text-lg leading-relaxed text-white/70">
+                We&apos;re expanding our retail network. Interested in carrying CAKE?
               </p>
               <Link
                 href="/request-samples"
-                className="inline-block bg-black text-white px-8 py-4 rounded font-bold hover:bg-gray-800 transition-colors"
+                className="micro mt-9 inline-flex items-center gap-3 border border-white/35 px-9 py-5 text-white transition-colors duration-300 hover:border-white hover:bg-white/10"
               >
-                Request Samples
+                REQUEST SAMPLES
+                <span aria-hidden="true">→</span>
               </Link>
             </div>
-          ) : (
-            <div className="space-y-12">
-              {cities.map((city) => {
-                const cityLocations = locationsByCity.get(city) || [];
-                return (
-                  <div key={city}>
-                    <h2 className="text-3xl font-black mb-6">{city}</h2>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                      {cityLocations.map((location, index) => (
-                        <div
-                          key={`${location.omma_license}-${index}`}
-                          className="border border-gray-200 rounded-lg p-6 hover:border-black transition-colors"
-                        >
-                          <h3 className="text-xl font-bold mb-3">
-                            {location.dispensary_name}
-                          </h3>
-                          
+          </div>
+        ) : (
+          <div className="space-y-16">
+            {cities.map((city) => {
+              const cityLocations = locationsByCity.get(city) || [];
+              return (
+                <div key={city}>
+                  <div className="holo-rule h-px w-full" style={{ opacity: 0.5 }} />
+                  <h2 className="display mt-8 text-[clamp(1.6rem,3vw,2.4rem)] text-white">
+                    {city}
+                  </h2>
+                  <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
+                    {cityLocations.map((location, index) => (
+                      <div
+                        key={`${location.omma_license}-${index}`}
+                        className="border border-white/12 p-6 transition-colors hover:border-white/35"
+                      >
+                        <h3 className="display text-lg text-white">
+                          {location.dispensary_name}
+                        </h3>
+
+                        <dl className="mt-5 space-y-3 text-white/70">
                           {location.address && (
-                            <p className="text-gray-700 mb-2">
-                              📍 {location.address}
-                              {location.city && `, ${location.city}`}
-                            </p>
+                            <div>
+                              <dt className="micro text-white/35">ADDRESS</dt>
+                              <dd className="mt-1">
+                                {location.address}
+                                {location.city && `, ${location.city}`}
+                              </dd>
+                            </div>
                           )}
 
                           {location.phone && (
-                            <p className="text-gray-700 mb-2">
-                              📞{' '}
-                              <a
-                                href={`tel:${location.phone}`}
-                                className="hover:text-black font-medium"
-                              >
-                                {location.phone}
-                              </a>
-                            </p>
+                            <div>
+                              <dt className="micro text-white/35">PHONE</dt>
+                              <dd className="mt-1">
+                                <a
+                                  href={`tel:${location.phone}`}
+                                  className="text-white transition-colors hover:text-cake"
+                                >
+                                  {location.phone}
+                                </a>
+                              </dd>
+                            </div>
                           )}
 
                           {location.email && (
-                            <p className="text-gray-700 mb-4">
-                              ✉️{' '}
-                              <a
-                                href={`mailto:${location.email}`}
-                                className="hover:text-black font-medium"
-                              >
-                                {location.email}
-                              </a>
-                            </p>
+                            <div>
+                              <dt className="micro text-white/35">EMAIL</dt>
+                              <dd className="mt-1">
+                                <a
+                                  href={`mailto:${location.email}`}
+                                  className="text-white transition-colors hover:text-cake"
+                                >
+                                  {location.email}
+                                </a>
+                              </dd>
+                            </div>
                           )}
+                        </dl>
 
-                          {location.address && (
-                            <a
-                              href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                                `${location.dispensary_name} ${location.address} ${location.city || ''}`
-                              )}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-block mt-4 border border-black text-black px-4 py-2 rounded font-bold text-sm hover:bg-black hover:text-white transition-colors"
-                            >
-                              Get Directions →
-                            </a>
-                          )}
-                        </div>
-                      ))}
-                    </div>
+                        {location.address && (
+                          <a
+                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                              `${location.dispensary_name} ${location.address} ${location.city || ''}`
+                            )}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="micro group mt-6 inline-flex items-center gap-2 border border-white/25 px-5 py-3 text-white transition-colors hover:border-white hover:bg-white/10"
+                          >
+                            GET DIRECTIONS
+                            <span className="transition-transform duration-300 group-hover:translate-x-1">
+                              →
+                            </span>
+                          </a>
+                        )}
+                      </div>
+                    ))}
                   </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </section>
 
-      {/* Info Section */}
-      <section className="px-6 py-20 lg:px-12 border-t bg-gray-50">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-4xl font-black mb-8">
-            Dispensary Not Listed?
-          </h2>
-          <div className="space-y-6">
-            <p className="text-xl text-gray-700 leading-relaxed">
-              If your favorite dispensary doesn't carry CAKE yet, let them know 
-              you'd like to see our products on their shelves. Word-of-mouth 
-              recommendations from customers make a real difference.
-            </p>
-            <p className="text-xl text-gray-700 leading-relaxed">
-              For dispensary owners and buyers: we make it easy to add CAKE to 
-              your inventory. Request samples and connect with our sales team.
-            </p>
-          </div>
-          <div className="mt-8">
-            <Link
-              href="/request-samples"
-              className="inline-block bg-black text-white px-8 py-4 rounded font-bold hover:bg-gray-800 transition-colors"
-            >
-              Request Samples
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Map Section (Placeholder) */}
+      {/* Map placeholder */}
       {locations.length > 0 && (
-        <section className="px-6 py-12 lg:px-12">
-          <div className="max-w-6xl mx-auto">
-            <div className="aspect-video bg-gray-200 rounded-lg flex items-center justify-center">
-              <p className="text-gray-500 text-lg">
-                Interactive map coming soon
-              </p>
-            </div>
+        <section className="mx-auto max-w-[1600px] px-5 pb-24 md:px-10">
+          <div className="flex aspect-video items-center justify-center border border-white/10 bg-smoke">
+            <p className="micro text-white/30">INTERACTIVE MAP COMING SOON</p>
           </div>
         </section>
       )}
+
+      {/* Dispensary Not Listed */}
+      <section className="bg-smoke">
+        <div className="mx-auto max-w-[1600px] px-5 py-24 md:px-10">
+          <div className="grid gap-10 md:grid-cols-[minmax(0,22ch)_minmax(0,1fr)] md:gap-16">
+            <h2 className="display text-[clamp(1.8rem,3.4vw,2.8rem)] text-white">
+              Dispensary Not Listed?
+            </h2>
+            <div>
+              <div className="max-w-[62ch] space-y-6 text-lg leading-relaxed text-white/70">
+                <p>
+                  If your favorite dispensary doesn&apos;t carry CAKE yet, let them know
+                  you&apos;d like to see our products on their shelves. Word-of-mouth
+                  recommendations from customers make a real difference.
+                </p>
+                <p>
+                  For dispensary owners and buyers: we make it easy to add CAKE to your
+                  inventory. Request samples and connect with our sales team.
+                </p>
+              </div>
+              <div className="holo-border mt-10 inline-block">
+                <Link
+                  href="/request-samples"
+                  className="micro group inline-flex items-center gap-3 px-9 py-5 text-white transition-colors duration-300 hover:!bg-transparent hover:text-ink"
+                >
+                  REQUEST SAMPLES
+                  <span className="transition-transform duration-300 group-hover:translate-x-1">
+                    →
+                  </span>
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
