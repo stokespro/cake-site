@@ -16,7 +16,9 @@ export const revalidate = 1800; // Revalidate every 30 minutes
  * The view derives its rows from CRM state — active customers who have placed
  * an order (customers.has_orders, kept in sync by triggers on orders), plus
  * anyone force-included via show_on_map, minus explicit hide_from_map opt-outs.
- * Nothing here needs maintaining: a dispensary appears after its first order.
+ * `recent_strains` is what each store took delivery of in the last 90 days,
+ * measured from query time. Nothing here needs maintaining: a dispensary
+ * appears after its first order and its strain list decays on its own.
  *
  * `public_dispensary_locations` is defined with `security_invoker = on`, so it
  * runs with the caller's permissions rather than the owner's. The anon role has
@@ -116,7 +118,7 @@ export default async function FindUsPage() {
                   <div className="mt-8 grid grid-cols-1 gap-4 md:grid-cols-2">
                     {cityLocations.map((location, index) => (
                       <div
-                        key={`${location.omma_license}-${index}`}
+                        key={`${location.dispensary_name}-${index}`}
                         className="border border-white/12 p-6 transition-colors hover:border-white/35"
                       >
                         <h3 className="display text-lg text-white">
@@ -134,13 +136,41 @@ export default async function FindUsPage() {
                             </div>
                           )}
 
-                          {location.omma_license && (
+                          {location.phone && (
                             <div>
-                              <dt className="micro text-white/35">OMMA LICENCE</dt>
-                              <dd className="mt-1 tabular-nums">{location.omma_license}</dd>
+                              <dt className="micro text-white/35">PHONE</dt>
+                              <dd className="mt-1">
+                                <a
+                                  href={`tel:${location.phone.replace(/[^\d+]/g, '')}`}
+                                  className="text-white transition-colors hover:text-cake"
+                                >
+                                  {location.phone}
+                                </a>
+                              </dd>
                             </div>
                           )}
                         </dl>
+
+                        {/* "Stocked recently", not "in stock": this is what the
+                            store took delivery of in the last 90 days, which is
+                            the strongest claim the order data actually supports. */}
+                        {location.recent_strains && location.recent_strains.length > 0 && (
+                          <div className="mt-6 border-t border-white/10 pt-5">
+                            <p className="micro text-white/35">STOCKED IN THE LAST 90 DAYS</p>
+                            <ul className="mt-3 flex flex-wrap gap-2">
+                              {location.recent_strains.map((strain) => (
+                                <li key={strain.slug}>
+                                  <Link
+                                    href={`/strains/${strain.slug}`}
+                                    className="inline-block border border-white/12 px-3 py-1.5 text-sm text-white/75 transition-colors hover:border-white/45 hover:text-white"
+                                  >
+                                    {strain.name}
+                                  </Link>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
 
                         {location.address && (
                           <a

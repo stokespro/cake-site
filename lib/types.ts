@@ -62,18 +62,27 @@ export interface Customer {
   show_on_map?: boolean;
 }
 
+/** A strain a dispensary has taken delivery of recently. */
+export interface RecentStrain {
+  name: string;
+  slug: string;
+}
+
 /**
  * Shape of the public_dispensary_locations view.
  *
- * No phone or email: most order-placing customers have a personal email domain
- * on file (the buyer's own address, not a store contact), so the view exposes
- * only what a consumer needs to find the store.
+ * No email: 72 of the 92 order-placing customers with one on file use a
+ * personal domain (the buyer's own address, not a store contact).
+ *
+ * `recent_strains` is strains delivered in the last 90 days, and is null for
+ * stores that have carried CAKE before but not ordered recently.
  */
 export interface DispensaryLocation {
   dispensary_name: string;
   address: string | null;
   city: string | null;
-  omma_license: string | null;
+  phone: string | null;
+  recent_strains: RecentStrain[] | null;
 }
 
 export interface Subscriber {
