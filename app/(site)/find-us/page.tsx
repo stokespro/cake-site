@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { supabase } from '@/lib/supabase';
+import { supabaseAdmin } from '@/lib/supabase';
 import { DispensaryLocation } from '@/lib/types';
 import Link from 'next/link';
 
@@ -10,9 +10,26 @@ export const metadata: Metadata = {
 
 export const revalidate = 1800; // Revalidate every 30 minutes
 
+/**
+ * Reads the dispensary view with the SERVICE ROLE, not the anon client.
+ *
+ * `public_dispensary_locations` is defined with `security_invoker = on`, so it
+ * runs with the caller's permissions rather than the owner's. The anon role has
+ * no privilege on the underlying `customers` table — deliberately, since that
+ * table holds ~1,900 CRM records — so an anon read fails with
+ * "permission denied for table customers" no matter what is granted on the view
+ * itself. The alternative was flipping the view to security-definer, which would
+ * publish every opted-in dispensary's name, address, phone, email and OMMA
+ * licence to anyone holding the public anon key.
+ *
+ * This runs server-side only: the page is an async Server Component with
+ * `revalidate` below, so the service role key is never sent to the browser.
+ * DO NOT add 'use client' to this file, and do not import this function into a
+ * client component.
+ */
 async function getDispensaryLocations(): Promise<DispensaryLocation[]> {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseAdmin
       .from('public_dispensary_locations')
       .select('*');
 
