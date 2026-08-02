@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import Map, {
   Layer,
   MapRef,
@@ -171,16 +171,6 @@ export function DispensaryLocator({ locations, initialView }: Props) {
     );
   }, []);
 
-  // Keep the list in step with the camera after programmatic moves too.
-  useEffect(() => {
-    const map = mapRef.current?.getMap();
-    if (!map) return;
-    map.on('moveend', recomputeVisible);
-    return () => {
-      map.off('moveend', recomputeVisible);
-    };
-  }, [recomputeVisible]);
-
   if (!TOKEN) {
     return (
       <div className="flex aspect-video items-center justify-center border border-white/10 bg-smoke">
@@ -290,6 +280,10 @@ export function DispensaryLocator({ locations, initialView }: Props) {
           mapStyle="mapbox://styles/mapbox/dark-v11"
           interactiveLayerIds={['clusters', 'unclustered']}
           onLoad={recomputeVisible}
+          // react-map-gl's own prop rather than map.on('moveend') in an effect:
+          // the ref is still null on first render, so a manual listener never
+          // attaches and the list silently stops tracking the camera.
+          onMoveEnd={recomputeVisible}
           onClick={onMapClick}
           onMouseEnter={(e) => {
             const c = e.target.getCanvas();
