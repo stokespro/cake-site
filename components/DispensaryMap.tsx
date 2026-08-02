@@ -13,6 +13,7 @@ import type { GeoJSONSource } from 'mapbox-gl';
 import type { GeoJSON } from 'geojson';
 import Link from 'next/link';
 import { DispensaryLocation, RecentStrain } from '@/lib/types';
+import { formatStoreAddress } from '@/lib/utils';
 import 'mapbox-gl/dist/mapbox-gl.css';
 
 /**
@@ -204,8 +205,7 @@ export function DispensaryMap({ locations, initialView }: Props) {
               <p className="display text-base text-white">{popup.name}</p>
               {popup.address && (
                 <p className="mt-2 text-sm leading-relaxed text-white/70">
-                  {popup.address}
-                  {popup.city && `, ${popup.city}`}
+                  {formatStoreAddress(popup.address, popup.city)}
                 </p>
               )}
               {popup.phone && (

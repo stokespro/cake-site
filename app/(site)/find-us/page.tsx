@@ -2,6 +2,7 @@ import { Metadata } from 'next';
 import { supabaseAdmin } from '@/lib/supabase';
 import { DispensaryLocation } from '@/lib/types';
 import { DispensaryMap } from '@/components/DispensaryMap';
+import { formatStoreAddress } from '@/lib/utils';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -156,8 +157,7 @@ export default async function FindUsPage() {
                             <div>
                               <dt className="micro text-white/35">ADDRESS</dt>
                               <dd className="mt-1">
-                                {location.address}
-                                {location.city && `, ${location.city}`}
+                                {formatStoreAddress(location.address, location.city)}
                               </dd>
                             </div>
                           )}
