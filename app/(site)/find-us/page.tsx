@@ -1,7 +1,7 @@
 import { Metadata } from 'next';
 import { supabaseAdmin } from '@/lib/supabase';
 import { DispensaryLocation } from '@/lib/types';
-import { DispensaryMap } from '@/components/DispensaryMap';
+import { DispensaryLocator } from '@/components/DispensaryLocator';
 import { formatStoreAddress } from '@/lib/utils';
 import Link from 'next/link';
 
@@ -102,7 +102,7 @@ export default async function FindUsPage() {
       {/* Map */}
       {locations.length > 0 && (
         <section className="mx-auto max-w-[1600px] px-5 pb-16 md:px-10">
-          <DispensaryMap locations={locations} initialView={initialView} />
+          <DispensaryLocator locations={locations} initialView={initialView} />
           {unpinned > 0 && (
             <p className="micro mt-4 text-white/35">
               {unpinned} {unpinned === 1 ? 'LOCATION' : 'LOCATIONS'} NOT YET MAPPED — SEE THE
