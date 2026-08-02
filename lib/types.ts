@@ -78,10 +78,14 @@ export interface RecentStrain {
  * stores that have carried CAKE before but not ordered recently.
  */
 export interface DispensaryLocation {
+  id: string;
   dispensary_name: string;
   address: string | null;
   city: string | null;
   phone: string | null;
+  /** Null where the address did not geocode; such stores list without a pin. */
+  latitude: number | null;
+  longitude: number | null;
   recent_strains: RecentStrain[] | null;
 }
 

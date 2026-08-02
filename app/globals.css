@@ -234,3 +234,68 @@ body {
   background: #e8452f;
   color: #fff;
 }
+
+/* ============================================================
+   MAPBOX
+   mapbox-gl.css ships a white popup with rounded corners and a
+   white tip. Overridden here rather than in the component because
+   the popup renders into a Mapbox-owned DOM node outside React's
+   tree, so Tailwind classes on our markup cannot reach it.
+   ============================================================ */
+.cake-popup .mapboxgl-popup-content {
+  padding: 0;
+  border-radius: 0;
+  background: var(--ink);
+  border: 1px solid rgb(255 255 255 / 0.15);
+  box-shadow: 0 12px 40px rgb(0 0 0 / 0.5);
+}
+/* The tip must be targeted per anchor. Mapbox's own
+   `.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip` rule has the same
+   specificity as a plain `.cake-popup .mapboxgl-popup-tip` and loads after it
+   (mapbox-gl.css is imported from the component), so it wins and the tip stays
+   white. Chaining .cake-popup onto the anchor class outranks it.
+   All anchors are covered because Mapbox flips the anchor near viewport edges. */
+.cake-popup.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip,
+.cake-popup.mapboxgl-popup-anchor-bottom-left .mapboxgl-popup-tip,
+.cake-popup.mapboxgl-popup-anchor-bottom-right .mapboxgl-popup-tip {
+  border-top-color: var(--ink);
+}
+.cake-popup.mapboxgl-popup-anchor-top .mapboxgl-popup-tip,
+.cake-popup.mapboxgl-popup-anchor-top-left .mapboxgl-popup-tip,
+.cake-popup.mapboxgl-popup-anchor-top-right .mapboxgl-popup-tip {
+  border-bottom-color: var(--ink);
+}
+.cake-popup.mapboxgl-popup-anchor-left .mapboxgl-popup-tip {
+  border-right-color: var(--ink);
+}
+.cake-popup.mapboxgl-popup-anchor-right .mapboxgl-popup-tip {
+  border-left-color: var(--ink);
+}
+.cake-popup .mapboxgl-popup-close-button {
+  color: rgb(255 255 255 / 0.5);
+  font-size: 18px;
+  padding: 4px 8px;
+  background: transparent;
+}
+.cake-popup .mapboxgl-popup-close-button:hover {
+  color: #fff;
+  background: transparent;
+}
+
+/* Attribution and controls: Mapbox requires the attribution stay visible,
+   so tone it into the dark UI rather than hiding it. */
+.mapboxgl-ctrl-attrib,
+.mapboxgl-ctrl-attrib a {
+  background: rgb(10 10 11 / 0.7) !important;
+  color: rgb(255 255 255 / 0.45) !important;
+}
+.mapboxgl-ctrl-group {
+  background: rgb(10 10 11 / 0.85);
+  border: 1px solid rgb(255 255 255 / 0.15);
+}
+.mapboxgl-ctrl-group button + button {
+  border-top-color: rgb(255 255 255 / 0.15);
+}
+.mapboxgl-ctrl-group button .mapboxgl-ctrl-icon {
+  filter: invert(1);
+}

@@ -1,6 +1,7 @@
 import { Metadata } from 'next';
 import { supabaseAdmin } from '@/lib/supabase';
 import { DispensaryLocation } from '@/lib/types';
+import { DispensaryMap } from '@/components/DispensaryMap';
 import Link from 'next/link';
 
 export const metadata: Metadata = {
@@ -71,6 +72,18 @@ export default async function FindUsPage() {
   const locations = await getDispensaryLocations();
   const locationsByCity = groupByCity(locations);
   const cities = Array.from(locationsByCity.keys()).sort();
+  const pinned = locations.filter((l) => l.latitude != null && l.longitude != null);
+  const unpinned = locations.length - pinned.length;
+
+  // Frame the map on the actual centroid of the stores rather than a fixed
+  // point, so it stays sensible as the footprint grows.
+  const initialView = pinned.length
+    ? {
+        longitude: pinned.reduce((s, l) => s + l.longitude!, 0) / pinned.length,
+        latitude: pinned.reduce((s, l) => s + l.latitude!, 0) / pinned.length,
+        zoom: 6.3,
+      }
+    : undefined;
 
   return (
     <div className="min-h-screen bg-ink">
@@ -84,6 +97,19 @@ export default async function FindUsPage() {
           Discover premium dispensaries carrying CAKE products across Oklahoma.
         </p>
       </section>
+
+      {/* Map */}
+      {locations.length > 0 && (
+        <section className="mx-auto max-w-[1600px] px-5 pb-16 md:px-10">
+          <DispensaryMap locations={locations} initialView={initialView} />
+          {unpinned > 0 && (
+            <p className="micro mt-4 text-white/35">
+              {unpinned} {unpinned === 1 ? 'LOCATION' : 'LOCATIONS'} NOT YET MAPPED — SEE THE
+              FULL LIST BELOW
+            </p>
+          )}
+        </section>
+      )}
 
       {/* Dispensary List */}
       <section className="mx-auto max-w-[1600px] px-5 pb-24 md:px-10">
@@ -196,15 +222,6 @@ export default async function FindUsPage() {
           </div>
         )}
       </section>
-
-      {/* Map placeholder */}
-      {locations.length > 0 && (
-        <section className="mx-auto max-w-[1600px] px-5 pb-24 md:px-10">
-          <div className="flex aspect-video items-center justify-center border border-white/10 bg-smoke">
-            <p className="micro text-white/30">INTERACTIVE MAP COMING SOON</p>
-          </div>
-        </section>
-      )}
 
       {/* Dispensary Not Listed */}
       <section className="bg-smoke">
