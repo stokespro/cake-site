@@ -31,8 +31,23 @@ export type StrainTheme = {
   fg: string
   /** Inactive names in the vertical stack. */
   muted: string
-  /** Rules, stat underlines, accents. */
+  /** Rules, stat underlines, accents. Also tints the backdrop motif. */
   accent: string
+}
+
+/**
+ * Repeating brand motif laid over `theme.bg`. See <StrainBackdrop> for why this
+ * must be the minimal repeating unit and not a finished pattern render.
+ */
+export type StrainPattern = {
+  /** Seamless tile — a white silhouette whose alpha carries the shape. */
+  src: string
+  /**
+   * Tint strength. Keep it low: this sits behind the strain name and stats, and
+   * the logo's holo layer blends with `color-dodge`, so a loud backdrop both
+   * hurts text contrast and blows out the foil.
+   */
+  opacity: number
 }
 
 export type Strain = {
@@ -59,6 +74,8 @@ export type Strain = {
   featured: boolean
   sort_order: number
   theme: StrainTheme
+  /** Backdrop motif, or null for a flat `theme.bg` panel. */
+  pattern: StrainPattern | null
 }
 
 export const strains: Strain[] = [
@@ -84,6 +101,7 @@ export const strains: Strain[] = [
       muted: 'rgba(255,255,255,0.14)',
       accent: '#8FE8D5',
     },
+    pattern: null,
   },
   {
     id: '2a8be3d3-d928-4775-9bb1-8b3a8ab18727',
@@ -107,6 +125,7 @@ export const strains: Strain[] = [
       muted: 'rgba(255,255,255,0.13)',
       accent: '#F5D04E',
     },
+    pattern: null,
   },
   {
     id: 'cf0ffddb-cd35-4b16-8241-780c2c3714b5',
@@ -130,6 +149,7 @@ export const strains: Strain[] = [
       muted: 'rgba(19,19,22,0.13)',
       accent: '#7A4A22',
     },
+    pattern: null,
   },
   {
     id: '2558796b-3807-429f-9988-6156aca31cc1',
@@ -153,6 +173,7 @@ export const strains: Strain[] = [
       muted: 'rgba(255,255,255,0.14)',
       accent: '#5FD3F0',
     },
+    pattern: null,
   },
   {
     id: '30037ef4-cbef-4b08-8d02-9cf916d5cea5',
@@ -176,6 +197,7 @@ export const strains: Strain[] = [
       muted: 'rgba(255,255,255,0.14)',
       accent: '#F7C9D6',
     },
+    pattern: null,
   },
   {
     id: '819e7386-51a8-43c7-bebe-3554a04d2287',
@@ -199,6 +221,7 @@ export const strains: Strain[] = [
       muted: 'rgba(255,255,255,0.14)',
       accent: '#FFE07A',
     },
+    pattern: null,
   },
   {
     id: 'de3537d5-46fc-40c1-9e7d-db98931c26bb',
@@ -222,6 +245,7 @@ export const strains: Strain[] = [
       muted: 'rgba(255,255,255,0.14)',
       accent: '#9BE84A',
     },
+    pattern: null,
   },
   {
     id: '9af05002-ab79-4326-97f7-9ea22b901a01',
@@ -245,6 +269,7 @@ export const strains: Strain[] = [
       muted: 'rgba(255,255,255,0.13)',
       accent: '#D4AF37',
     },
+    pattern: { src: '/brand/medusa-tile.png', opacity: 0.34 },
   },
 ]
 

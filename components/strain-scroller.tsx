@@ -5,6 +5,7 @@ import { AnimatePresence, motion, useMotionValueEvent, useScroll } from 'framer-
 import { useRef, useState } from 'react'
 import { strains } from '@/lib/strains'
 import { StrainArt } from './strain-art'
+import { StrainBackdrop } from './strain-backdrop'
 
 const EASE = [0.16, 1, 0.3, 1] as const
 
@@ -49,6 +50,22 @@ export function StrainScroller() {
           transition: 'background-color 700ms cubic-bezier(0.16,1,0.3,1), color 700ms ease',
         }}
       >
+        {/* ---------- backdrop motif (only strains that carry one) ----------
+            Keyed on slug inside AnimatePresence so swapping strains cross-fades
+            the pattern instead of hard-cutting the mask. */}
+        <AnimatePresence>
+          <motion.div
+            key={active.slug}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.7, ease: EASE }}
+            className="absolute inset-0 z-0"
+          >
+            <StrainBackdrop strain={active} />
+          </motion.div>
+        </AnimatePresence>
+
         {/* ---------- left rail: product lines + counter ---------- */}
         <div className="pointer-events-none absolute left-0 top-0 hidden h-full w-[86px] flex-col items-center justify-center gap-10 border-r md:flex"
              style={{ borderColor: `${theme.fg}1F` }}>
@@ -70,7 +87,10 @@ export function StrainScroller() {
         </div>
 
         {/* ---------- main grid ---------- */}
-        <div className="mx-auto grid h-full max-w-[1600px] grid-cols-1 grid-rows-[minmax(0,1fr)_auto_auto] content-center items-center gap-5 px-5 pb-28 pt-[80px] md:grid-cols-[minmax(0,0.92fr)_minmax(0,1.1fr)_minmax(280px,330px)] md:grid-rows-1 md:gap-8 md:px-10 md:pb-16 md:pt-[88px] md:pl-[126px] lg:gap-12">
+        {/* `relative z-10` is load-bearing: the backdrop is absolutely
+            positioned, and a positioned element paints above a static one
+            regardless of source order. Without it the motif covers the copy. */}
+        <div className="relative z-10 mx-auto grid h-full max-w-[1600px] grid-cols-1 grid-rows-[minmax(0,1fr)_auto_auto] content-center items-center gap-5 px-5 pb-28 pt-[80px] md:grid-cols-[minmax(0,0.92fr)_minmax(0,1.1fr)_minmax(280px,330px)] md:grid-rows-1 md:gap-8 md:px-10 md:pb-16 md:pt-[88px] md:pl-[126px] lg:gap-12">
           {/* --- art --- */}
           <div className="relative flex min-h-0 items-center justify-center">
             <AnimatePresence mode="wait">
