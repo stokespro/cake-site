@@ -34,15 +34,21 @@ const INITIAL_VIEW = { longitude: -96.15, latitude: 35.85, zoom: 6.3 };
 const CAKE = '#E8452F';
 
 /**
- * Pen the camera to Oklahoma plus a margin, the way the Mapbox demo bounds
- * itself to the continental US. Without it a visitor can pan into empty ocean
- * and be told there are no stores nearby, which reads as a broken locator
- * rather than an empty viewport. Derived from the geocoded extent
- * (lat 33.99–36.75, lon -99.45 to -94.50) with roughly 2 degrees of slack.
+ * Pen the camera regionally, the way the Mapbox demo bounds itself to the
+ * continental US: without it a visitor can pan into empty ocean and be told
+ * there are no stores nearby, which reads as broken rather than empty.
+ *
+ * Deliberately much wider than the data (which spans lat 33.99–36.75, lon
+ * -99.45 to -94.50). A snug box fights the opening camera: at zoom 6.3 the
+ * viewport is about 19 degrees of longitude across, so a 9-degree bound cannot
+ * contain it and Mapbox clamps, silently overriding the centroid passed as
+ * initialView and dragging the opening view west. These bounds are wide enough
+ * to leave the opening framing alone while still stopping a pan to another
+ * continent.
  */
 const MAX_BOUNDS: [[number, number], [number, number]] = [
-  [-101.5, 32.2], // south-west
-  [-92.5, 38.6], // north-east
+  [-107, 29.5], // south-west
+  [-87, 41.5], // north-east
 ];
 
 type ViewState = { longitude: number; latitude: number; zoom: number };
