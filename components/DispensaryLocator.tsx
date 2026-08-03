@@ -77,6 +77,7 @@ export function DispensaryLocator({ locations, initialView }: Props) {
   );
 
   const [visibleIds, setVisibleIds] = useState<string[] | null>(null);
+  const [center, setCenter] = useState<Coords | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [userLoc, setUserLoc] = useState<Coords | null>(null);
   const [geoStatus, setGeoStatus] = useState<GeoStatus>('idle');
@@ -98,6 +99,8 @@ export function DispensaryLocator({ locations, initialView }: Props) {
     const map = mapRef.current?.getMap();
     if (!map) return;
     const b: LngLatBounds = map.getBounds()!;
+    const c = map.getCenter();
+    setCenter({ latitude: c.lat, longitude: c.lng });
     setVisibleIds(
       pinned
         .filter((l) => b.contains([l.longitude!, l.latitude!]))
@@ -105,18 +108,29 @@ export function DispensaryLocator({ locations, initialView }: Props) {
     );
   }, [pinned]);
 
-  // Sort by distance once we know where the visitor is; otherwise keep the
-  // server's ordering (city, then name), which is already meaningful.
+  /**
+   * Always nearest-first, measured from the visitor if they have shared a
+   * location and from the centre of the current view otherwise.
+   *
+   * The server's order (city A-Z, then name) is wrong for this panel: it opens
+   * on the whole state and leads with Ardmore, a small town in the far south,
+   * while most stores sit around Tulsa and OKC. Sorting from the map centre
+   * needs no permission, works on first paint, and re-sorts as the map moves,
+   * which makes "Use My Location" an upgrade of the same mechanic rather than a
+   * separate mode. The city-grouped list below the map keeps the alphabetical
+   * ordering, where it is the point.
+   */
   const visible = useMemo(() => {
     const ids = visibleIds;
     const inView = ids === null ? pinned : pinned.filter((l) => ids.includes(l.id));
-    if (!userLoc) return inView;
+    const reference = userLoc ?? center;
+    if (!reference) return inView;
     return [...inView].sort(
       (a, b) =>
-        milesBetween(userLoc, { latitude: a.latitude!, longitude: a.longitude! }) -
-        milesBetween(userLoc, { latitude: b.latitude!, longitude: b.longitude! })
+        milesBetween(reference, { latitude: a.latitude!, longitude: a.longitude! }) -
+        milesBetween(reference, { latitude: b.latitude!, longitude: b.longitude! })
     );
-  }, [visibleIds, pinned, userLoc]);
+  }, [visibleIds, pinned, userLoc, center]);
 
   const flyTo = useCallback((l: DispensaryLocation) => {
     setSelectedId(l.id);
@@ -205,7 +219,11 @@ export function DispensaryLocator({ locations, initialView }: Props) {
           )}
           <p className="micro mt-4 text-white/40">
             {visible.length} {visible.length === 1 ? 'STORE' : 'STORES'} IN VIEW
-            {userLoc && ' · NEAREST FIRST'}
+            {/* Only claimed when measured from the visitor. The list is also
+                sorted nearest-first from the map centre, but a mileage figure
+                relative to an arbitrary viewport centre would mislead, so the
+                per-card distances stay gated on a real location too. */}
+            {userLoc && ' · NEAREST TO YOU'}
           </p>
         </div>
 
