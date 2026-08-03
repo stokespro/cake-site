@@ -51,13 +51,11 @@ const MAX_BOUNDS: [[number, number], [number, number]] = [
   [-87, 41.5], // north-east
 ];
 
-type ViewState = { longitude: number; latitude: number; zoom: number };
 type Coords = { latitude: number; longitude: number };
 type GeoStatus = 'idle' | 'locating' | 'ready' | 'denied' | 'unavailable';
 
 type Props = {
   locations: DispensaryLocation[];
-  initialView?: ViewState;
 };
 
 /** Great-circle distance in miles. */
@@ -73,7 +71,7 @@ function milesBetween(a: Coords, b: Coords): number {
   return 2 * R * Math.asin(Math.sqrt(h));
 }
 
-export function DispensaryLocator({ locations, initialView }: Props) {
+export function DispensaryLocator({ locations }: Props) {
   const mapRef = useRef<MapRef>(null);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -81,6 +79,45 @@ export function DispensaryLocator({ locations, initialView }: Props) {
     () => locations.filter((l) => l.latitude != null && l.longitude != null),
     [locations]
   );
+
+  /**
+   * Frame the actual footprint rather than a hand-picked centre.
+   *
+   * Picking a point meant choosing between defensible answers that disagree by
+   * ~80 miles: the geographic centre of Oklahoma (which is essentially OKC) or
+   * the mean of the store coordinates (which sits near Tulsa, because 51 of the
+   * 85 stores are there — a density artifact, not a sensible camera). fitBounds
+   * sidesteps the question, guarantees every pin is on screen, and re-frames
+   * itself as the footprint changes.
+   *
+   * maxZoom stops a single-store or single-city result from slamming to street
+   * level.
+   */
+  const fitBounds = useMemo(() => {
+    if (!pinned.length) return null;
+    let minLng = Infinity;
+    let minLat = Infinity;
+    let maxLng = -Infinity;
+    let maxLat = -Infinity;
+    for (const l of pinned) {
+      minLng = Math.min(minLng, l.longitude!);
+      maxLng = Math.max(maxLng, l.longitude!);
+      minLat = Math.min(minLat, l.latitude!);
+      maxLat = Math.max(maxLat, l.latitude!);
+    }
+    // Inflate before fitting. Fitting the raw extent puts the viewport edge
+    // exactly on the outermost store, and getBounds().contains() is exclusive
+    // at the boundary — the northernmost pin was drawn on the map but excluded
+    // from the list, out by 2e-13 of a degree. The margin also gives the edge
+    // pins visual breathing room. The floor covers a degenerate extent (one
+    // store, or several at one address).
+    const padLng = Math.max((maxLng - minLng) * 0.06, 0.05);
+    const padLat = Math.max((maxLat - minLat) * 0.06, 0.05);
+    return [
+      [minLng - padLng, minLat - padLat],
+      [maxLng + padLng, maxLat + padLat],
+    ] as [[number, number], [number, number]];
+  }, [pinned]);
 
   const [visibleIds, setVisibleIds] = useState<string[] | null>(null);
   const [center, setCenter] = useState<Coords | null>(null);
@@ -299,14 +336,25 @@ export function DispensaryLocator({ locations, initialView }: Props) {
         <Map
           ref={mapRef}
           mapboxAccessToken={TOKEN}
-          initialViewState={initialView ?? INITIAL_VIEW}
+          initialViewState={
+            fitBounds
+              ? { bounds: fitBounds, fitBoundsOptions: { padding: 56, maxZoom: 11 } }
+              : INITIAL_VIEW
+          }
           maxBounds={MAX_BOUNDS}
           mapStyle="mapbox://styles/mapbox/dark-v11"
           interactiveLayerIds={['clusters', 'unclustered']}
-          onLoad={recomputeVisible}
-          // react-map-gl's own prop rather than map.on('moveend') in an effect:
-          // the ref is still null on first render, so a manual listener never
+          // react-map-gl's own props rather than map.on(...) in an effect: the
+          // ref is still null on first render, so a manual listener never
           // attaches and the list silently stops tracking the camera.
+          //
+          // onIdle as well as onLoad because initialViewState.bounds is applied
+          // as a fitBounds transition. At load the camera has not settled yet,
+          // so sampling getBounds() there misses pins near the edge — the north
+          // extreme was drawn on the map but absent from the list. idle fires
+          // once the camera comes to rest, including after that initial fit.
+          onLoad={recomputeVisible}
+          onIdle={recomputeVisible}
           onMoveEnd={recomputeVisible}
           onClick={onMapClick}
           onMouseEnter={(e) => {

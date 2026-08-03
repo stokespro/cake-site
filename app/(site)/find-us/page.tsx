@@ -112,18 +112,7 @@ export default async function FindUsPage() {
   const locations = await getDispensaryLocations();
   const locationsByCity = groupByCity(locations);
   const cities = sortCities(Array.from(locationsByCity.keys()));
-  const pinned = locations.filter((l) => l.latitude != null && l.longitude != null);
-  const unpinned = locations.length - pinned.length;
-
-  // Frame the map on the actual centroid of the stores rather than a fixed
-  // point, so it stays sensible as the footprint grows.
-  const initialView = pinned.length
-    ? {
-        longitude: pinned.reduce((s, l) => s + l.longitude!, 0) / pinned.length,
-        latitude: pinned.reduce((s, l) => s + l.latitude!, 0) / pinned.length,
-        zoom: 6.3,
-      }
-    : undefined;
+  const unpinned = locations.filter((l) => l.latitude == null || l.longitude == null).length;
 
   return (
     <div className="min-h-screen bg-ink">
@@ -141,7 +130,7 @@ export default async function FindUsPage() {
       {/* Map */}
       {locations.length > 0 && (
         <section className="mx-auto max-w-[1600px] px-5 pb-16 md:px-10">
-          <DispensaryLocator locations={locations} initialView={initialView} />
+          <DispensaryLocator locations={locations} />
           {unpinned > 0 && (
             <p className="micro mt-4 text-white/35">
               {unpinned} {unpinned === 1 ? 'LOCATION' : 'LOCATIONS'} NOT YET MAPPED — SEE THE
