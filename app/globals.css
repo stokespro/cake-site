@@ -282,12 +282,14 @@ body {
   background: transparent;
 }
 
-/* Attribution and controls: Mapbox requires the attribution stay visible,
-   so tone it into the dark UI rather than hiding it. */
-.mapboxgl-ctrl-attrib,
-.mapboxgl-ctrl-attrib a {
-  background: rgb(10 10 11 / 0.7) !important;
-  color: rgb(255 255 255 / 0.45) !important;
+/* The Mapbox wordmark and the on-map attribution are suppressed at the account
+   owner's direction. The credit lives in the site footer instead (SiteFooter).
+   Note this is a deviation from Mapbox's stated terms, which require both on
+   the map; the OpenStreetMap credit is separately required by ODbL, which is
+   why it is kept in the footer rather than dropped. */
+.mapboxgl-ctrl-logo,
+.mapboxgl-ctrl-attrib {
+  display: none !important;
 }
 .mapboxgl-ctrl-group {
   background: rgb(10 10 11 / 0.85);

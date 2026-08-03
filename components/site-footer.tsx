@@ -46,10 +46,35 @@ export function SiteFooter() {
         </div>
 
         <div className="mt-14 flex flex-col gap-4 border-t border-white/10 pt-7 md:flex-row md:items-center md:justify-between">
-          <p className="text-[11px] leading-relaxed text-white/35">
-            JTS Manufacturing LLC d/b/a CAKE. For licensed Oklahoma medical marijuana
-            businesses and patients 18+. Keep out of reach of children.
-          </p>
+          <div>
+            <p className="text-[11px] leading-relaxed text-white/35">
+              JTS Manufacturing LLC d/b/a CAKE. For licensed Oklahoma medical marijuana
+              businesses and patients 18+. Keep out of reach of children.
+            </p>
+            {/* Map attribution. The on-map controls are suppressed on Find Us, so
+                the credit is carried here. The OpenStreetMap link is required by
+                ODbL, which governs the underlying data independently of the
+                Mapbox terms — do not remove it. */}
+            <p className="mt-2 text-[11px] text-white/25">
+              Map data{' '}
+              <a
+                href="https://www.mapbox.com/about/maps/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2 transition-colors hover:text-white/50"
+              >
+                © Mapbox
+              </a>{' '}
+              <a
+                href="https://www.openstreetmap.org/copyright"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline underline-offset-2 transition-colors hover:text-white/50"
+              >
+                © OpenStreetMap
+              </a>
+            </p>
+          </div>
           <div className="flex gap-7">
             <span className="micro text-white/45">cakeoklahoma.com</span>
             <span className="micro text-white/45">@cakeoklahoma</span>

@@ -342,6 +342,12 @@ export function DispensaryLocator({ locations }: Props) {
               : INITIAL_VIEW
           }
           maxBounds={MAX_BOUNDS}
+          // On-map attribution is suppressed at the account owner's direction.
+          // The required credit is carried in the site footer instead — see
+          // SiteFooter. The OpenStreetMap half is an ODbL obligation attached to
+          // the data itself, independent of the Mapbox terms, so it must stay
+          // somewhere on the page regardless of this setting.
+          attributionControl={false}
           mapStyle="mapbox://styles/mapbox/dark-v11"
           interactiveLayerIds={['clusters', 'unclustered']}
           // react-map-gl's own props rather than map.on(...) in an effect: the
