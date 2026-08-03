@@ -54,12 +54,42 @@ async function getDispensaryLocations(): Promise<DispensaryLocation[]> {
   }
 }
 
+const UNKNOWN_CITY = 'Other';
+
+/**
+ * Six rows carry a street fragment in the city column instead of a city — the
+ * residue of a bad CRM import. Left alone they render as headings like
+ * "W TH AVE" and "S ND ST" in the city list. The real city is recoverable from
+ * the address, which always ends with it, so it is mapped here rather than
+ * editing the CRM. Fix the source rows and these entries become dead code.
+ */
+const CITY_CORRECTIONS: Record<string, string> = {
+  'E. STATE HIGHWAY': 'MUSTANG',
+  'N MAIN ST': 'NEWCASTLE',
+  'S ND ST': 'STILWELL',
+  'S SOONER RD': 'MIDWEST CITY',
+  'W LOCUST ST': 'STILWELL',
+  'W TH AVE': 'STILLWATER',
+};
+
+/**
+ * Normalise for grouping. The column mixes cases ("BARTLESVILLE" and
+ * "Bartlesville" are both present), which without this produces two headings
+ * for one town — and a case-sensitive sort then separates them, so
+ * "Bartlesville" landed after "BROKEN ARROW".
+ */
+function cityKey(city: string | null): string {
+  const raw = (city ?? '').trim().toUpperCase();
+  if (!raw) return UNKNOWN_CITY;
+  return CITY_CORRECTIONS[raw] ?? raw;
+}
+
 // Group locations by city
 function groupByCity(locations: DispensaryLocation[]): Map<string, DispensaryLocation[]> {
   const grouped = new Map<string, DispensaryLocation[]>();
 
   locations.forEach((location) => {
-    const city = location.city || 'Other';
+    const city = cityKey(location.city);
     if (!grouped.has(city)) {
       grouped.set(city, []);
     }
@@ -69,10 +99,19 @@ function groupByCity(locations: DispensaryLocation[]): Map<string, DispensaryLoc
   return grouped;
 }
 
+/** Cities A-Z, with the no-city bucket parked at the end rather than under "O". */
+function sortCities(cities: string[]): string[] {
+  return cities.sort((a, b) => {
+    if (a === UNKNOWN_CITY) return 1;
+    if (b === UNKNOWN_CITY) return -1;
+    return a.localeCompare(b, 'en', { sensitivity: 'base' });
+  });
+}
+
 export default async function FindUsPage() {
   const locations = await getDispensaryLocations();
   const locationsByCity = groupByCity(locations);
-  const cities = Array.from(locationsByCity.keys()).sort();
+  const cities = sortCities(Array.from(locationsByCity.keys()));
   const pinned = locations.filter((l) => l.latitude != null && l.longitude != null);
   const unpinned = locations.length - pinned.length;
 
