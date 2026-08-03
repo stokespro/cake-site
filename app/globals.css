@@ -199,18 +199,6 @@ body {
   }
 }
 
-@keyframes holo-idle-bands {
-  0%,
-  100% {
-    background-position: 34% 34%, 66% 34%;
-    filter: brightness(0.7) contrast(1.55) saturate(1.1);
-  }
-  50% {
-    background-position: 66% 66%, 34% 66%;
-    filter: brightness(0.88) contrast(1.7) saturate(1.25);
-  }
-}
-
 @keyframes holo-idle-sparkle {
   0%,
   100% {

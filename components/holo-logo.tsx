@@ -5,20 +5,19 @@ import { useReducedMotion } from 'framer-motion'
 import { useCallback, useRef, useState } from 'react'
 
 /**
- * Pokémon-card holographic foil, clipped to a logo's silhouette.
+ * Pokémon-card holographic sparkle, clipped to a logo's silhouette.
  *
  * Adapted from simeydotme's "Pokemon Card Holo Effect"
- * (https://codepen.io/simeydotme/pen/PrQKgo). Same three ingredients:
+ * (https://codepen.io/simeydotme/pen/PrQKgo), minus its rainbow band layer —
+ * `color-dodge`ing a rainbow over the strain lockups shifted their brand
+ * colors, so only two ingredients survive:
  *
  *   1. pointer-tracked 3D tilt (rotateX / rotateY),
- *   2. a repeating rainbow gradient blended with `color-dodge`, its
- *      background-position driven by the pointer,
- *   3. a sparkle texture, also color-dodged, moving on a different axis so the
- *      two layers separate as you move — that parallax is what sells "foil"
- *      rather than "gradient".
+ *   2. a sparkle texture blended with `color-dodge`, its background-position
+ *      driven by the pointer.
  *
- * The difference from the original: there's no card face here. Both effect
- * layers are masked with the logo PNG itself (`mask-image`), so the foil plays
+ * The difference from the original: there's no card face here. The sparkle
+ * layer is masked with the logo PNG itself (`mask-image`), so the foil plays
  * only inside the artwork and the panel behind stays clean.
  *
  * `isolation: isolate` on the root is load-bearing — without it `color-dodge`
@@ -61,9 +60,7 @@ export function HoloLogo({
   // Pointer -> transform + gradient offsets. Numbers tuned to the original pen.
   const rx = (0.5 - p.y) * 22
   const ry = (p.x - 0.5) * 22
-  const bgX = 40 + p.x * 20 // rainbow band travel
-  const bgY = 40 + p.y * 20
-  const spX = 20 + p.x * 60 // sparkles travel further -> parallax
+  const spX = 20 + p.x * 60
   const spY = 20 + p.y * 60
 
   const mask = {
@@ -110,29 +107,7 @@ export function HoloLogo({
           className="object-contain drop-shadow-[0_20px_38px_rgba(0,0,0,0.42)]"
         />
 
-        {/* layer 1 — rainbow foil bands */}
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0"
-          style={{
-            ...mask,
-            mixBlendMode: 'color-dodge',
-            opacity: active ? 0.56 : 0.48,
-            transition: 'opacity 300ms ease',
-            backgroundImage:
-              'repeating-linear-gradient(0deg, rgb(255,119,115) 5%, rgba(255,237,95,1) 10%, rgba(168,255,95,1) 15%, rgba(131,255,247,1) 20%, rgba(120,148,255,1) 25%, rgb(216,117,255) 30%, rgb(255,119,115) 35%),' +
-              'repeating-linear-gradient(115deg, transparent 0%, rgba(255,255,255,0.55) 12%, transparent 24%)',
-            backgroundBlendMode: 'screen',
-            backgroundSize: '190% 190%, 220% 220%',
-            backgroundPosition: `${bgX}% ${bgY}%, ${100 - bgX}% ${bgY}%`,
-            // Brightness is the throttle. color-dodge over mid-tone art blows
-            // straight to white above ~0.7 and the strain logo disappears.
-            filter: `brightness(${active ? 0.66 : 0.7}) contrast(1.55) saturate(1.15)`,
-            animation: idle ? 'holo-idle-bands 14s ease-in-out infinite' : undefined,
-          }}
-        />
-
-        {/* layer 2 — sparkle/glitter, parallaxed against the bands */}
+        {/* sparkle/glitter */}
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0"
