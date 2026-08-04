@@ -266,7 +266,7 @@ export const strains: Strain[] = [
     featured: false,
     sort_order: 4,
     theme: {
-      bg: '#10485F',
+      bg: '#043649',
       fg: '#FFFFFF',
       muted: 'rgba(255,255,255,0.14)',
       accent: '#5FD3F0',
