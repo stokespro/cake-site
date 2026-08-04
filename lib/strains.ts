@@ -36,19 +36,40 @@ export type StrainTheme = {
 }
 
 /**
- * Repeating brand motif laid over `theme.bg`. See <StrainBackdrop> for why this
- * must be the minimal repeating unit and not a finished pattern render.
+ * What sits behind a strain panel instead of a flat `theme.bg`.
+ *
+ * The two kinds are not variations on a theme — they behave oppositely and must
+ * not be collapsed into one "background image" field:
+ *
+ *  - `tile` is a PATTERN. It has no composition, so it is never scaled to the
+ *    screen; it repeats at a fixed size and a bigger display simply gets more
+ *    repeats. Nothing can be cropped because there is nothing to crop.
+ *  - `scene` is a PICTURE. It has a horizon and a subject, so it must be
+ *    scaled to cover and therefore WILL crop — severely in portrait, where a
+ *    16:9 scene shows about a quarter of its width. Art direction (which part
+ *    survives the crop) is the whole problem, and `position` is the control.
  */
-export type StrainPattern = {
-  /** Seamless tile — a white silhouette whose alpha carries the shape. */
-  src: string
-  /**
-   * Tint strength. Keep it low: this sits behind the strain name and stats, and
-   * the logo's holo layer blends with `color-dodge`, so a loud backdrop both
-   * hurts text contrast and blows out the foil.
-   */
-  opacity: number
-}
+export type StrainBackdrop =
+  | {
+      kind: 'tile'
+      /** Seamless repeating unit — white silhouette whose alpha carries the shape. */
+      src: string
+      /**
+       * Tint strength. Keep it low: this sits behind the strain name and stats,
+       * and the logo's holo layer blends with `color-dodge`, so a loud backdrop
+       * both hurts text contrast and blows out the foil.
+       */
+      opacity: number
+    }
+  | {
+      kind: 'scene'
+      /** Full-bleed artwork, rendered through next/image so it gets a srcset. */
+      src: string
+      /** Dimmed toward `theme.bg` — full-strength illustration eats the type. */
+      opacity: number
+      /** object-position. Decides what survives the crop on tall viewports. */
+      position: string
+    }
 
 export type Strain = {
   id: string | null
@@ -74,8 +95,8 @@ export type Strain = {
   featured: boolean
   sort_order: number
   theme: StrainTheme
-  /** Backdrop motif, or null for a flat `theme.bg` panel. */
-  pattern: StrainPattern | null
+  /** Backdrop art, or null for a flat `theme.bg` panel. */
+  backdrop: StrainBackdrop | null
 }
 
 export const strains: Strain[] = [
@@ -101,7 +122,7 @@ export const strains: Strain[] = [
       muted: 'rgba(255,255,255,0.14)',
       accent: '#8FE8D5',
     },
-    pattern: null,
+    backdrop: null,
   },
   {
     id: '2a8be3d3-d928-4775-9bb1-8b3a8ab18727',
@@ -125,7 +146,7 @@ export const strains: Strain[] = [
       muted: 'rgba(255,255,255,0.13)',
       accent: '#F5D04E',
     },
-    pattern: null,
+    backdrop: null,
   },
   {
     id: 'cf0ffddb-cd35-4b16-8241-780c2c3714b5',
@@ -149,7 +170,7 @@ export const strains: Strain[] = [
       muted: 'rgba(19,19,22,0.13)',
       accent: '#7A4A22',
     },
-    pattern: null,
+    backdrop: null,
   },
   {
     id: '2558796b-3807-429f-9988-6156aca31cc1',
@@ -173,7 +194,7 @@ export const strains: Strain[] = [
       muted: 'rgba(255,255,255,0.14)',
       accent: '#5FD3F0',
     },
-    pattern: null,
+    backdrop: null,
   },
   {
     id: '30037ef4-cbef-4b08-8d02-9cf916d5cea5',
@@ -197,7 +218,7 @@ export const strains: Strain[] = [
       muted: 'rgba(255,255,255,0.14)',
       accent: '#F7C9D6',
     },
-    pattern: null,
+    backdrop: null,
   },
   {
     id: '819e7386-51a8-43c7-bebe-3554a04d2287',
@@ -221,7 +242,7 @@ export const strains: Strain[] = [
       muted: 'rgba(255,255,255,0.14)',
       accent: '#FFE07A',
     },
-    pattern: null,
+    backdrop: null,
   },
   {
     id: 'de3537d5-46fc-40c1-9e7d-db98931c26bb',
@@ -240,12 +261,21 @@ export const strains: Strain[] = [
     featured: false,
     sort_order: 7,
     theme: {
-      bg: '#5A2D82',
+      // Sampled from the backdrop artwork's shadows so the scrim reads as the
+      // scene receding rather than as a coloured veil over it. Was #5A2D82.
+      bg: '#0A2C3C',
       fg: '#FFFFFF',
-      muted: 'rgba(255,255,255,0.14)',
+      muted: 'rgba(255,255,255,0.16)',
       accent: '#9BE84A',
     },
-    pattern: null,
+    backdrop: {
+      kind: 'scene',
+      src: '/strains/mac1-scene.webp',
+      opacity: 0.62,
+      // Biased left of centre and below the horizon: keeps the rock formation
+      // and skyline in frame when a 16:9 scene is cropped to a phone's 0.46:1.
+      position: '38% 58%',
+    },
   },
   {
     id: '9af05002-ab79-4326-97f7-9ea22b901a01',
@@ -269,7 +299,7 @@ export const strains: Strain[] = [
       muted: 'rgba(255,255,255,0.13)',
       accent: '#D4AF37',
     },
-    pattern: { src: '/brand/medusa-tile.png', opacity: 0.34 },
+    backdrop: { kind: 'tile', src: '/brand/medusa-tile.png', opacity: 0.34 },
   },
 ]
 
