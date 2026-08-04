@@ -65,7 +65,7 @@ export function StrainBackdrop({ strain }: { strain: Strain }) {
             maskRepeat: 'repeat',
           }}
         />
-      ) : (
+      ) : backdrop.kind === 'scene' ? (
         <Image
           src={backdrop.src}
           alt=""
@@ -76,32 +76,93 @@ export function StrainBackdrop({ strain }: { strain: Strain }) {
           className="object-cover"
           style={{ objectPosition: backdrop.position, opacity: backdrop.opacity }}
         />
+      ) : (
+        <HorizonBackdrop backdrop={backdrop} />
       )}
 
-      {/* Scrim. The art runs edge to edge, but the inactive name stack is only
-          13-16% opacity and turns to mud over bare artwork. This pulls
-          `theme.bg` back where the type sits and leaves the art at full
-          strength everywhere else.
+      {/* Scrim, for the two art-derived kinds only. It runs edge to edge, but
+          the inactive name stack is only 13-16% opacity and turns to mud over
+          bare artwork, so this pulls `theme.bg` back where the type sits and
+          leaves the art at full strength everywhere else.
 
           It has to follow the layout, which reflows at `md`, so there are two.
           A single radial tuned for the desktop panel covers almost the whole
           viewport once it's narrow and portrait — 115% x 78% of a 390x844
-          panel is nearly all of it — which flattens the art to a wash. */}
-      <div
-        // Desktop: art left, names centre, stats right. Bias the scrim right.
-        className="absolute inset-0 hidden md:block"
-        style={{
-          background: `radial-gradient(115% 78% at 68% 50%, ${theme.bg} 0%, ${theme.bg}E6 34%, ${theme.bg}00 78%)`,
-        }}
-      />
-      <div
-        // Mobile: the grid stacks — art on top, name and stats beneath. So the
-        // scrim runs top-to-bottom and leaves the upper half clear.
-        className="absolute inset-0 md:hidden"
-        style={{
-          background: `linear-gradient(to bottom, ${theme.bg}00 0%, ${theme.bg}40 34%, ${theme.bg}D9 56%, ${theme.bg} 76%)`,
-        }}
-      />
+          panel is nearly all of it — which flattens the art to a wash.
+
+          `horizon` is excluded deliberately: it's a drawing with a deliberate
+          light/dark split, and hazing it toward one flat colour would destroy
+          exactly the contrast it was designed around. */}
+      {backdrop.kind !== 'horizon' && (
+        <>
+          <div
+            // Desktop: art left, names centre, stats right. Bias the scrim right.
+            className="absolute inset-0 hidden md:block"
+            style={{
+              background: `radial-gradient(115% 78% at 68% 50%, ${theme.bg} 0%, ${theme.bg}E6 34%, ${theme.bg}00 78%)`,
+            }}
+          />
+          <div
+            // Mobile: the grid stacks — art on top, name and stats beneath. So
+            // the scrim runs top-to-bottom and leaves the upper half clear.
+            className="absolute inset-0 md:hidden"
+            style={{
+              background: `linear-gradient(to bottom, ${theme.bg}00 0%, ${theme.bg}40 34%, ${theme.bg}D9 56%, ${theme.bg} 76%)`,
+            }}
+          />
+        </>
+      )}
     </div>
+  )
+}
+
+/**
+ * The curved-horizon drawing. Both bands are one element each; the arc is the
+ * hard stop of a radial gradient, whose ellipse is solved from the two horizon
+ * percentages rather than hard-coded, so the shape survives any aspect ratio.
+ *
+ * Solving it: put the ellipse centre on the bottom edge (50%, 100%). Its top
+ * sits at `100 - ry`, which is the horizon at centre, giving ry directly. At
+ * the left/right edge the horizontal offset is 50% of the width, so
+ *
+ *   dyEdge = ry * sqrt(1 - (50 / rx)^2)
+ *
+ * and rearranging for rx gives the width radius that lands the arc on
+ * `horizonEdge`. For Biscotti's measured 64.7 / 68.1 that is rx ~= 117%.
+ */
+function HorizonBackdrop({
+  backdrop,
+}: {
+  backdrop: Extract<NonNullable<Strain['backdrop']>, { kind: 'horizon' }>
+}) {
+  const { skyCentre, skyEdge, ground } = backdrop
+
+  /** Solve the ground ellipse that puts the arc on those two heights. */
+  const groundLayer = (centre: number, edge: number) => {
+    const ry = 100 - centre
+    const dyEdge = 100 - edge
+    const rx = 50 / Math.sqrt(Math.max(1 - (dyEdge / ry) ** 2, 0.0001))
+    // The 0.4% feather is what keeps the arc from stair-stepping.
+    return `radial-gradient(ellipse ${rx.toFixed(2)}% ${ry.toFixed(2)}% at 50% 100%, ${ground} 0 99.6%, transparent 100%)`
+  }
+
+  return (
+    <>
+      {/* sky — measured as horizontal-only, hence the tall vertical radius */}
+      <div
+        className="absolute inset-0"
+        style={{
+          background: `radial-gradient(ellipse 50% 200% at 50% 40%, ${skyCentre} 0%, ${skyEdge} 100%)`,
+        }}
+      />
+      <div
+        className="absolute inset-0 hidden md:block"
+        style={{ background: groundLayer(backdrop.horizonCentre, backdrop.horizonEdge) }}
+      />
+      <div
+        className="absolute inset-0 md:hidden"
+        style={{ background: groundLayer(backdrop.horizonCentreSm, backdrop.horizonEdgeSm) }}
+      />
+    </>
   )
 }

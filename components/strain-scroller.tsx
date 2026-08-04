@@ -34,6 +34,10 @@ export function StrainScroller() {
   const active = strains[index]
   const { theme } = active
 
+  // Chrome pinned to the foot of the panel sits on the horizon backdrop's dark
+  // ground band, where theme.fg (chosen against the sky) is unreadable.
+  const barFg = active.backdrop?.kind === 'horizon' ? active.backdrop.groundFg : theme.fg
+
   return (
     <section
       id="strains"
@@ -199,7 +203,11 @@ export function StrainScroller() {
           </div>
         </div>
 
-        {/* ---------- bottom bar ---------- */}
+        {/* ---------- bottom bar ----------
+            Colour comes from `barFg`, not `theme.fg`. On a horizon backdrop the
+            foot of the panel is the dark ground band, and theme.fg is picked
+            against the sky — for Biscotti that is 15.8:1 on the sky but 1.27:1
+            here, i.e. the nav reads as blank. See `groundFg` in lib/strains.ts. */}
         <div className="absolute inset-x-0 bottom-0 z-20">
           {/* progress ticks */}
           <div className="mx-auto flex max-w-[1600px] gap-1.5 px-5 pb-5 md:px-10">
@@ -210,19 +218,19 @@ export function StrainScroller() {
                 style={
                   i <= index
                     ? undefined
-                    : { backgroundColor: `${theme.fg}26`, transition: 'background-color 500ms ease' }
+                    : { backgroundColor: `${barFg}26`, transition: 'background-color 500ms ease' }
                 }
               />
             ))}
           </div>
           <div className="mx-auto flex max-w-[1600px] items-center justify-between px-5 pb-6 md:px-10 md:pb-8">
-            <span className="micro" style={{ color: `${theme.fg}70` }}>
+            <span className="micro" style={{ color: `${barFg}A6`, transition: 'color 600ms ease' }}>
               SCROLL
             </span>
             <Link
               href="/strains"
               className="micro group inline-flex items-center gap-3"
-              style={{ color: theme.fg }}
+              style={{ color: barFg, transition: 'color 600ms ease' }}
             >
               COMPARE ALL STRAINS
               <span className="transition-transform duration-300 group-hover:translate-x-1">→</span>

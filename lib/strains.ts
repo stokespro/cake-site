@@ -38,8 +38,9 @@ export type StrainTheme = {
 /**
  * What sits behind a strain panel instead of a flat `theme.bg`.
  *
- * The two kinds are not variations on a theme — they behave oppositely and must
- * not be collapsed into one "background image" field:
+ * The kinds are not variations on a theme — they behave differently enough that
+ * collapsing them into one "background image" field would hide the thing that
+ * actually matters about each:
  *
  *  - `tile` is a PATTERN. It has no composition, so it is never scaled to the
  *    screen; it repeats at a fixed size and a bigger display simply gets more
@@ -48,6 +49,12 @@ export type StrainTheme = {
  *    scaled to cover and therefore WILL crop — severely in portrait, where a
  *    16:9 scene shows about a quarter of its width. Art direction (which part
  *    survives the crop) is the whole problem, and `position` is the control.
+ *  - `horizon` is a DRAWING, reproduced in CSS from measurements rather than
+ *    shipped at all. It neither tiles nor crops: it is re-solved to whatever
+ *    box it lands in, so it is exact on every viewport.
+ *
+ * Artwork arriving as a 1920x1080 JPEG says nothing about which one it is —
+ * all three did. Measure it before choosing.
  */
 export type StrainBackdrop =
   | {
@@ -69,6 +76,51 @@ export type StrainBackdrop =
       opacity: number
       /** object-position. Decides what survives the crop on tall viewports. */
       position: string
+    }
+  | {
+      /**
+       * Two-tone sky over a curved horizon, drawn in CSS rather than shipped as
+       * a bitmap. Biscotti's artwork arrived as a 1920x1080 JPEG, but measuring
+       * it showed a design, not an illustration: the horizon sits within 2.27px
+       * of a perfect circular arc across the full width, and the sky is a plain
+       * horizontal gradient. Rasterising that is strictly worse — the supplied
+       * file already bands badly (16 distinct values across the sky, in flat
+       * runs averaging 12px, and only 3 vertically), which a browser-rendered
+       * gradient does not do, and the hard arc picked up JPEG ringing. Drawn in
+       * CSS it is exact at any size, costs no request, and lets the horizon be
+       * placed against the layout instead of baked to the artwork's aspect.
+       */
+      kind: 'horizon'
+      /** Sky gradient, brightest at centre falling to the edges. */
+      skyCentre: string
+      skyEdge: string
+      /** Flat colour below the horizon. */
+      ground: string
+      /**
+       * Text colour for chrome that sits on the ground band. `theme.fg` is
+       * chosen against the sky, and on a two-tone backdrop one colour cannot
+       * serve both: Biscotti's #131316 scores 15.8:1 on the sky and 1.27:1 on
+       * the ground, i.e. invisible. The scroller's bottom bar is always at the
+       * foot of the panel and therefore always on the ground, so it takes this.
+       */
+      groundFg: string
+      /**
+       * Horizon height as a percentage of panel height, at the arc's centre and
+       * where it meets the left/right edges. The component solves the ellipse
+       * from these two numbers, so the arc keeps its shape at any aspect ratio.
+       */
+      horizonCentre: number
+      horizonEdge: number
+      /**
+       * The same pair for the stacked mobile layout. Required, not optional,
+       * because the desktop values are actively wrong below `md` and a silent
+       * fallback would ship that: the grid reflows to art-over-copy, so a
+       * horizon at 64.7% lands squarely through the strain name and stats and
+       * leaves dark type on the dark band. Dropping the arc to the foot of the
+       * panel keeps all copy on the sky and one text colour honest throughout.
+       */
+      horizonCentreSm: number
+      horizonEdgeSm: number
     }
 
 export type Strain = {
@@ -176,12 +228,26 @@ export const strains: Strain[] = [
     featured: false,
     sort_order: 3,
     theme: {
-      bg: '#E3D5BC',
+      bg: '#F6D97C',
       fg: '#131316',
-      muted: 'rgba(19,19,22,0.13)',
+      muted: 'rgba(19,19,22,0.16)',
       accent: '#7A4A22',
     },
-    backdrop: null,
+    backdrop: {
+      kind: 'horizon',
+      skyCentre: '#FDEF8E',
+      skyEdge: '#F1B44E',
+      ground: '#24292F',
+      // The sky's own centre colour rather than plain white — 12.5:1 on the
+      // ground, and it belongs to this palette where white would not.
+      groundFg: '#FDEF8E',
+      // Measured off the supplied artwork: 64.7% at centre, 68.1% at the edges.
+      horizonCentre: 64.7,
+      horizonEdge: 68.1,
+      // Phone: the copy fills the lower half, so the arc drops beneath it.
+      horizonCentreSm: 88,
+      horizonEdgeSm: 91.4,
+    },
   },
   {
     id: '2558796b-3807-429f-9988-6156aca31cc1',
