@@ -32,12 +32,29 @@ export function HoloLogo({
   priority = false,
   sizes = '(max-width: 768px) 66vw, 34vw',
   className = '',
+  shadow = '0 20px 38px rgba(0,0,0,0.42)',
+  sparkle = 0.42,
 }: {
   src: string
   alt: string
   priority?: boolean
   sizes?: string
   className?: string
+  /**
+   * drop-shadow value. Both this and `sparkle` are configurable because both
+   * DARKEN semi-transparent artwork, which is invisible on a dark panel and
+   * obvious on a light one. The shadow is a black blur cast behind the art, so
+   * anything below full opacity shows it through; and `color-dodge` inside
+   * `isolation: isolate` blends against the group's own transparent-black
+   * backdrop, which darkens rather than lightens where the art is not solid.
+   *
+   * Bacio Gelato is a quarter semi-transparent cloud at 50% alpha. Together the
+   * two layers cost it ~27 levels of lightness against its pink panel, which
+   * read as the clouds turning grey.
+   */
+  shadow?: string
+  /** Sparkle opacity at rest; the active (hovered) value scales from it. */
+  sparkle?: number
 }) {
   const ref = useRef<HTMLDivElement>(null)
   const [active, setActive] = useState(false)
@@ -104,7 +121,8 @@ export function HoloLogo({
           fill
           sizes={sizes}
           priority={priority}
-          className="object-contain drop-shadow-[0_20px_38px_rgba(0,0,0,0.42)]"
+          className="object-contain"
+          style={{ filter: `drop-shadow(${shadow})` }}
         />
 
         {/* sparkle/glitter */}
@@ -114,7 +132,7 @@ export function HoloLogo({
           style={{
             ...mask,
             mixBlendMode: 'color-dodge',
-            opacity: active ? 0.6 : 0.42,
+            opacity: active ? sparkle * 1.43 : sparkle,
             transition: 'opacity 300ms ease',
             backgroundImage: 'url(/brand/sparkle.webp)',
             backgroundSize: '38% auto',
