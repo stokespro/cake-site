@@ -45,14 +45,26 @@ export function StrainBackdrop({ strain }: { strain: Strain }) {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
       {backdrop.kind === 'tile' ? (
-        <div
-          className="absolute inset-0"
-          style={{
+        <>
+          {/* Optional wash under the motif, for artwork whose background is a
+              gradient rather than the flat theme.bg. Radii are in percent of
+              the panel, so it restretches instead of cropping. */}
+          {backdrop.wash && (
+            <div
+              className="absolute inset-0"
+              style={{
+                background: `radial-gradient(ellipse 57.5% 80% at 50% 50%, ${backdrop.wash.centre} 0%, ${backdrop.wash.edge} 100%)`,
+              }}
+            />
+          )}
+          <div
+            className="absolute inset-0"
+            style={{
             // Motif scales gently with the viewport so a phone doesn't show two
             // giant heads, but it never tracks the screen 1:1 — it's a texture,
             // so the tile count is meant to grow on a bigger display.
             ['--tile-w' as string]: backdrop.width,
-            backgroundColor: theme.accent,
+            backgroundColor: backdrop.color,
             opacity: backdrop.opacity,
             WebkitMaskImage: `url(${backdrop.src})`,
             maskImage: `url(${backdrop.src})`,
@@ -60,8 +72,9 @@ export function StrainBackdrop({ strain }: { strain: Strain }) {
             maskSize: `var(--tile-w) calc(var(--tile-w) * ${backdrop.aspect})`,
             WebkitMaskRepeat: 'repeat',
             maskRepeat: 'repeat',
-          }}
-        />
+            }}
+          />
+        </>
       ) : backdrop.kind === 'scene' ? (
         <Image
           src={backdrop.src}

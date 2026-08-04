@@ -70,11 +70,24 @@ export type StrainBackdrop =
       /** Rendered tile width. A texture, so this is a size, not a fraction of the screen. */
       width: string
       /**
+       * Colour the mask is filled with. Explicit rather than reaching for
+       * `theme.accent`: the accent is a UI colour for rules and underlines, and
+       * on Bacio the motif wants to be barely-there texture (1.9:1 against its
+       * own wash) while the accent still has to be legible as a rule. Tying
+       * them together means one cannot move without wrecking the other.
+       */
+      color: string
+      /**
        * Tint strength. Keep it low: this sits behind the strain name and stats,
        * and the logo's holo layer blends with `color-dodge`, so a loud backdrop
        * both hurts text contrast and blows out the foil.
        */
       opacity: number
+      /**
+       * Optional radial wash painted under the motif, for artwork whose
+       * background is a gradient rather than the flat `theme.bg`.
+       */
+      wash?: { centre: string; edge: string }
     }
   | {
       kind: 'scene'
@@ -292,6 +305,7 @@ export const strains: Strain[] = [
       // Larger than the Medusa's because these are sparse shapes, not a dense
       // lattice — at the Medusa's size they read as noise rather than bubbles.
       width: 'clamp(150px, 20vw, 300px)',
+      color: '#5FD3F0',
       opacity: 0.3,
     },
   },
@@ -312,12 +326,33 @@ export const strains: Strain[] = [
     featured: false,
     sort_order: 5,
     theme: {
-      bg: '#A03050',
-      fg: '#FFFFFF',
-      muted: 'rgba(255,255,255,0.14)',
-      accent: '#F7C9D6',
+      // Rethemed for the supplied backdrop, which is light pink where this
+      // panel was deep maroon. White copy on that wash is ~1.6:1, so the whole
+      // panel inverts: #3D0A1E clears 4.5:1 on both the wash centre (8.65:1)
+      // and its darker corners (5.08:1), and reads as maroon rather than as a
+      // neutral black. The old #A03050 background becomes the rule colour.
+      bg: '#F1A6BA',
+      fg: '#3D0A1E',
+      muted: 'rgba(61,10,30,0.16)',
+      accent: '#A03050',
     },
-    backdrop: null,
+    backdrop: {
+      kind: 'tile',
+      // Built from the supplied sunday-icon.png, not extracted from the
+      // background render — the render's motifs are only a few levels off their
+      // own background, so a clean icon is a far better source.
+      //
+      // The mask is weighted by DARKNESS rather than taken straight from alpha:
+      // a flat silhouette renders the sundae as a blob, losing the glass
+      // strokes, the drips and the scoop/cup boundary that the reference shows.
+      src: '/brand/sundae-tile.png',
+      aspect: 1.875, // 600 / 320 — two rows of the half-drop lattice
+      width: 'clamp(170px, 21vw, 320px)',
+      color: '#C4698A',
+      opacity: 0.55,
+      // The reference background is a radial wash, not a flat fill.
+      wash: { centre: '#F1A6BA', edge: '#C97493' },
+    },
   },
   {
     id: '819e7386-51a8-43c7-bebe-3554a04d2287',
@@ -413,6 +448,7 @@ export const strains: Strain[] = [
       src: '/brand/medusa-tile.png',
       aspect: 2.445, // 489 / 200
       width: 'clamp(104px, 13vw, 200px)',
+      color: '#D4AF37',
       opacity: 0.34,
     },
   },
