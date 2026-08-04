@@ -309,8 +309,18 @@ export const strains: Strain[] = [
     grow_method: 'Indoor',
     availability: 'available',
     badge: null,
-    image_url: '/strains/cereal-milk.webp',
-    artScale: 1.02,
+    // -v2 for the same cache reason as biscotti-v2: <HoloLogo> loads the art
+    // through next/image AND as a raw CSS mask URL, and overwriting a fixed
+    // path lets those two caches disagree into a ghosted double image.
+    image_url: '/strains/cereal-milk-v2.webp',
+    // The replacement is 0.947:1 where the old was 1.115:1 — portrait now. Both
+    // sit BELOW the 3:2 box, so object-contain binds on height and rendered
+    // area goes as scale² × aspect, the opposite of Biscotti's width-limited
+    // case. Carrying 1.02 across gave 1.107, but that only preserves whatever
+    // the old value happened to be; measuring the rendered lockups instead put
+    // it at 78.4k px² against a Biscotti/VerZace cluster of 83-85k, so this is
+    // trued to the cluster: 1.107 * sqrt(84/78.4).
+    artScale: 1.146,
     featured: false,
     sort_order: 6,
     theme: {
