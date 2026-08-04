@@ -52,11 +52,27 @@ export type StrainTheme = {
  *  - `horizon` is a DRAWING, reproduced in CSS from measurements rather than
  *    shipped at all. It neither tiles nor crops: it is re-solved to whatever
  *    box it lands in, so it is exact on every viewport.
+ *  - `wash` is the same idea with nothing on it: a bare radial gradient, for
+ *    artwork that is only a colour falloff.
  *
  * Artwork arriving as a 1920x1080 JPEG says nothing about which one it is —
  * all three did. Measure it before choosing.
  */
+/** A radial gradient, brightest at the centre and falling to the edges. */
+export type RadialWash = { centre: string; edge: string }
+
 export type StrainBackdrop =
+  | {
+      /**
+       * Nothing but a radial wash — the simplest kind, for artwork that is a
+       * plain gradient with no motif or composition at all. Drawn rather than
+       * shipped for the same reason as `horizon`: a browser gradient does not
+       * band, costs no request, and restretches to any viewport instead of
+       * cropping.
+       */
+      kind: 'wash'
+      wash: RadialWash
+    }
   | {
       kind: 'tile'
       /** Seamless repeating unit — white silhouette whose alpha carries the shape. */
@@ -87,7 +103,7 @@ export type StrainBackdrop =
        * Optional radial wash painted under the motif, for artwork whose
        * background is a gradient rather than the flat `theme.bg`.
        */
-      wash?: { centre: string; edge: string }
+      wash?: RadialWash
     }
   | {
       kind: 'scene'
@@ -381,12 +397,22 @@ export const strains: Strain[] = [
     featured: false,
     sort_order: 6,
     theme: {
-      bg: '#2F6FB0',
+      // Retimed from blue to the backdrop's own red. White copy still clears
+      // 4.5:1 across the whole wash (5.28:1 at the bright centre, 8.74:1 at the
+      // edges), so unlike Biscotti and Bacio this needed no inversion. The
+      // yellow accent stays — it is already the colour of the lockup's own
+      // "Thin Mint GSC x Undisclosed" ribbon.
+      bg: '#C6353C',
       fg: '#FFFFFF',
-      muted: 'rgba(255,255,255,0.14)',
+      muted: 'rgba(255,255,255,0.16)',
       accent: '#FFE07A',
     },
-    backdrop: null,
+    backdrop: {
+      kind: 'wash',
+      // Measured off the supplied backdrop: all four corners land on #8A2729
+      // and it brightens to #C6353C toward the middle.
+      wash: { centre: '#C6353C', edge: '#8A2729' },
+    },
   },
   {
     id: 'de3537d5-46fc-40c1-9e7d-db98931c26bb',

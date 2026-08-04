@@ -1,18 +1,19 @@
 'use client'
 
 import Image from 'next/image'
-import type { Strain } from '@/lib/strains'
+import type { RadialWash, Strain } from '@/lib/strains'
 
 /**
  * Per-strain backdrop for the pinned strain scroller — what sits behind the
  * panel instead of a single flat `theme.bg` hex.
  *
- * Two kinds, handled separately because they fail in opposite ways. See the
- * `StrainBackdrop` type in lib/strains.ts for the distinction; the short
- * version is that a tile repeats and cannot crop, while a scene must cover and
- * therefore always crops.
+ * Four kinds, handled separately because they behave differently under
+ * resizing. See the `StrainBackdrop` type in lib/strains.ts for the full
+ * distinction; the short version is that a tile repeats and cannot crop, a
+ * scene must cover and therefore always crops, and the two drawn kinds
+ * (`horizon`, `wash`) re-solve to whatever box they land in.
  *
- * ---- kind: 'tile' (VerZace) ----
+ * ---- kind: 'tile' (VerZace, Bubble Bath, Bacio Gelato) ----
  * A seamless repeating motif. WHY A TILE AND NOT THE SUPPLIED ARTWORK: the
  * Medusa arrived as a 1920x1080 render of the finished pattern, which can't be
  * used with `repeat` — the lattice is 200px across and 1920/200 = 9.6, so the
@@ -25,7 +26,7 @@ import type { Strain } from '@/lib/strains'
  *
  * The tile is a white silhouette whose ALPHA carries the shape, used as a CSS
  * mask rather than drawn directly — that's what lets one grayscale asset be
- * tinted per strain from `theme.accent`, the same trick as <FlameGrid> and
+ * tinted from the backdrop's own `color`, the same trick as <FlameGrid> and
  * <HoloLogo>.
  *
  * ---- kind: 'scene' (MAC1) ----
@@ -34,9 +35,21 @@ import type { Strain } from '@/lib/strains'
  * scene on a 0.46:1 phone shows only ~26% of its width, so `position` decides
  * what survives — that is art direction, not a default worth guessing at.
  *
- * Both kinds get the scrim below; without it the strain name stack (13-16%
- * opacity) is unreadable over the art.
+ * ---- kind: 'horizon' (Biscotti) / 'wash' (Cereal Milk) ----
+ * Drawn from measurements rather than shipped. Browser gradients don't band the
+ * way the supplied JPEGs did, cost no request, and restretch instead of
+ * cropping. Neither takes the scrim — see below.
  */
+
+/**
+ * Radial wash. Radii are percentages of the panel, so it restretches to any
+ * viewport rather than cropping — the whole reason these are drawn rather than
+ * shipped as bitmaps. Wider than tall because the panel is landscape on
+ * desktop and the falloff should reach the left and right edges together.
+ */
+function washCss({ centre, edge }: RadialWash) {
+  return `radial-gradient(ellipse 57.5% 80% at 50% 50%, ${centre} 0%, ${edge} 100%)`
+}
 
 export function StrainBackdrop({ strain }: { strain: Strain }) {
   const { backdrop, theme } = strain
@@ -44,18 +57,14 @@ export function StrainBackdrop({ strain }: { strain: Strain }) {
 
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 z-0">
-      {backdrop.kind === 'tile' ? (
+      {backdrop.kind === 'wash' ? (
+        <div className="absolute inset-0" style={{ background: washCss(backdrop.wash) }} />
+      ) : backdrop.kind === 'tile' ? (
         <>
           {/* Optional wash under the motif, for artwork whose background is a
-              gradient rather than the flat theme.bg. Radii are in percent of
-              the panel, so it restretches instead of cropping. */}
+              gradient rather than the flat theme.bg. */}
           {backdrop.wash && (
-            <div
-              className="absolute inset-0"
-              style={{
-                background: `radial-gradient(ellipse 57.5% 80% at 50% 50%, ${backdrop.wash.centre} 0%, ${backdrop.wash.edge} 100%)`,
-              }}
-            />
+            <div className="absolute inset-0" style={{ background: washCss(backdrop.wash) }} />
           )}
           <div
             className="absolute inset-0"
@@ -100,10 +109,11 @@ export function StrainBackdrop({ strain }: { strain: Strain }) {
           viewport once it's narrow and portrait — 115% x 78% of a 390x844
           panel is nearly all of it — which flattens the art to a wash.
 
-          `horizon` is excluded deliberately: it's a drawing with a deliberate
-          light/dark split, and hazing it toward one flat colour would destroy
+          `horizon` and `wash` are excluded deliberately. The scrim exists to
+          calm BUSY artwork behind small type; a drawn gradient has no detail to
+          calm, and hazing a horizon toward one flat colour would destroy
           exactly the contrast it was designed around. */}
-      {backdrop.kind !== 'horizon' && (
+      {backdrop.kind !== 'horizon' && backdrop.kind !== 'wash' && (
         <>
           <div
             // Desktop: art left, names centre, stats right. Bias the scrim right.
