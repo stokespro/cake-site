@@ -160,8 +160,19 @@ export const strains: Strain[] = [
     grow_method: 'Indoor',
     availability: 'available',
     badge: null,
-    image_url: '/strains/biscotti.webp',
-    artScale: 1.06,
+    // -v2 rather than overwriting biscotti.webp. <HoloLogo> loads the artwork
+    // TWICE by different routes — once through next/image (optimised, cached
+    // under .next/cache/images) and once as a raw CSS mask URL (browser cache).
+    // Replacing bytes at a fixed path lets those two caches disagree, and the
+    // logo then renders as a ghosted double image: the old silhouette masked
+    // over the new draw. That is not a dev-only hazard; Vercel restores
+    // .next/cache between builds. A new filename retires both copies at once.
+    image_url: '/strains/biscotti-v2.webp',
+    // Re-derived when the lockup was replaced with the higher-res draw: the new
+    // file is 1.61:1 where the old was 2.03:1, and since object-contain is
+    // width-limited in this 3:2 box, the same scale would have rendered it ~28%
+    // larger in area than its neighbours. 1.06 * sqrt(1.609/2.027).
+    artScale: 0.944,
     featured: false,
     sort_order: 3,
     theme: {
