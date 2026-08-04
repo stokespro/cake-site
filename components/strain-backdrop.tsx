@@ -38,9 +38,6 @@ import type { Strain } from '@/lib/strains'
  * opacity) is unreadable over the art.
  */
 
-/** Aspect of medusa-tile.png (489 / 200). Height is always derived from width. */
-const TILE_ASPECT = 2.445
-
 export function StrainBackdrop({ strain }: { strain: Strain }) {
   const { backdrop, theme } = strain
   if (!backdrop) return null
@@ -54,13 +51,13 @@ export function StrainBackdrop({ strain }: { strain: Strain }) {
             // Motif scales gently with the viewport so a phone doesn't show two
             // giant heads, but it never tracks the screen 1:1 — it's a texture,
             // so the tile count is meant to grow on a bigger display.
-            ['--tile-w' as string]: 'clamp(104px, 13vw, 200px)',
+            ['--tile-w' as string]: backdrop.width,
             backgroundColor: theme.accent,
             opacity: backdrop.opacity,
             WebkitMaskImage: `url(${backdrop.src})`,
             maskImage: `url(${backdrop.src})`,
-            WebkitMaskSize: `var(--tile-w) calc(var(--tile-w) * ${TILE_ASPECT})`,
-            maskSize: `var(--tile-w) calc(var(--tile-w) * ${TILE_ASPECT})`,
+            WebkitMaskSize: `var(--tile-w) calc(var(--tile-w) * ${backdrop.aspect})`,
+            maskSize: `var(--tile-w) calc(var(--tile-w) * ${backdrop.aspect})`,
             WebkitMaskRepeat: 'repeat',
             maskRepeat: 'repeat',
           }}

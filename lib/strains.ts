@@ -62,6 +62,14 @@ export type StrainBackdrop =
       /** Seamless repeating unit — white silhouette whose alpha carries the shape. */
       src: string
       /**
+       * height / width of that file. The rendered tile is sized from its width
+       * alone and the height derived from this, so the lattice cannot be
+       * accidentally skewed by setting the two independently.
+       */
+      aspect: number
+      /** Rendered tile width. A texture, so this is a size, not a fraction of the screen. */
+      width: string
+      /**
        * Tint strength. Keep it low: this sits behind the strain name and stats,
        * and the logo's holo layer blends with `color-dodge`, so a loud backdrop
        * both hurts text contrast and blows out the foil.
@@ -271,7 +279,21 @@ export const strains: Strain[] = [
       muted: 'rgba(255,255,255,0.14)',
       accent: '#5FD3F0',
     },
-    backdrop: null,
+    backdrop: {
+      kind: 'tile',
+      // GENERATED, not supplied artwork — no Bubble Bath background exists, so
+      // this echoes the motif already in the lockup. Each bubble is a bright
+      // rim, a faint interior and one specular highlight, laid out from a fixed
+      // list (no RNG, so it is reproducible) and drawn on a 3x canvas that is
+      // then folded down, which is what makes it seamless: anything crossing an
+      // edge lands on its own wrap partner. Replace freely with real art.
+      src: '/brand/bubble-tile.png',
+      aspect: 1, // 360 / 360
+      // Larger than the Medusa's because these are sparse shapes, not a dense
+      // lattice — at the Medusa's size they read as noise rather than bubbles.
+      width: 'clamp(150px, 20vw, 300px)',
+      opacity: 0.3,
+    },
   },
   {
     id: '30037ef4-cbef-4b08-8d02-9cf916d5cea5',
@@ -386,7 +408,13 @@ export const strains: Strain[] = [
       muted: 'rgba(255,255,255,0.13)',
       accent: '#D4AF37',
     },
-    backdrop: { kind: 'tile', src: '/brand/medusa-tile.png', opacity: 0.34 },
+    backdrop: {
+      kind: 'tile',
+      src: '/brand/medusa-tile.png',
+      aspect: 2.445, // 489 / 200
+      width: 'clamp(104px, 13vw, 200px)',
+      opacity: 0.34,
+    },
   },
 ]
 
