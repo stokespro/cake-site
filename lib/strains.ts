@@ -230,12 +230,31 @@ export const strains: Strain[] = [
     featured: true,
     sort_order: 2,
     theme: {
-      bg: '#1B1464',
+      // Retimed to the swirl's own dark purple (was #1B1464) so the cross-fade
+      // between panels lands on the colour actually on screen, and so the scrim
+      // — which is drawn in theme.bg — reads as the swirl receding rather than
+      // as a blue haze over a purple backdrop.
+      bg: '#180030',
       fg: '#FFFFFF',
-      muted: 'rgba(255,255,255,0.13)',
+      muted: 'rgba(255,255,255,0.15)',
       accent: '#F5D04E',
     },
-    backdrop: null,
+    backdrop: {
+      kind: 'scene',
+      // Centred, so object-cover's symmetric crop keeps the vortex origin on
+      // the panel centre at EVERY aspect ratio with no per-breakpoint anchoring.
+      // That only holds because the file was cropped on ingest so the swirl
+      // centre is the image centre exactly: it measured (49.38%, 49.44%), and
+      // the crop to 1896x1068 removes that 0.6% bias. Re-export it off-centre
+      // and the origin drifts as the viewport changes.
+      src: '/strains/cake-runtz-swirl.webp',
+      position: '50% 50%',
+      // Much lower than MAC1's 0.62. White copy scores 19.4:1 on the swirl's
+      // dark purple but only 4.6:1 on its magenta bands and 1.1:1 on the white
+      // hairlines, so at full strength the name stack sits on stripes it cannot
+      // beat. This plus the scrim is what keeps the type readable.
+      opacity: 0.38,
+    },
   },
   {
     id: 'cf0ffddb-cd35-4b16-8241-780c2c3714b5',
