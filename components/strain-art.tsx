@@ -5,7 +5,8 @@ import { HoloLogo } from './holo-logo'
 
 /**
  * Renders a strain's logo lockup on its nug bed. Falls back to a typographic
- * placeholder for strains whose art hasn't been drawn yet (Aloha Sugar).
+ * placeholder for any strain with no `image_url` yet — all eight have art now,
+ * so that branch is dormant until a ninth is added.
  *
  * The lockups vary from 1:1 (MAC1) to 2.9:1 (VerZace), so the box is 3:2 and
  * each strain carries an `artScale` that equalises rendered area — without it

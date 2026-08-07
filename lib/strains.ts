@@ -2,8 +2,9 @@
  * CAKE strain catalog.
  *
  * SOURCE OF TRUTH: CAKEMENU2026.html (wholesale menu master) — crosses, types,
- * and effects are copied verbatim from it. Strain logo art was extracted from
- * that same file into /public/strains/.
+ * and effects are copied verbatim from it. Logo art was originally extracted
+ * from that same file into /public/strains/; Biscotti, Cereal Milk and Aloha
+ * Sugar have since been replaced with higher-resolution supplied draws.
  *
  * Shape mirrors `public.strains` in the `cake` Supabase project
  * (ref: spkimmrtaxwnysjqkxix) so this can be swapped for a live query with no
@@ -201,8 +202,12 @@ export const strains: Strain[] = [
     grow_method: 'Indoor',
     availability: 'coming_soon',
     badge: 'NEW 2026 RELEASE',
-    image_url: null, // logo to come — <StrainArt /> renders the fallback lockup
-    artScale: 1.0,
+    image_url: '/strains/aloha-sugar.webp',
+    // Trued by measuring the rendered lockup, not derived alone: this is 0.97:1
+    // and sits below the 3:2 box, so object-contain binds on height and area
+    // goes as scale^2 x aspect. Calibrated against Cereal Milk (0.947:1 at
+    // 1.146 -> 82.8k px^2) to land in the current 83-85k cluster.
+    artScale: 1.133,
     featured: true,
     sort_order: 1,
     theme: {
