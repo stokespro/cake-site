@@ -1,7 +1,7 @@
 'use client'
 
+import Image from 'next/image'
 import type { Strain } from '@/lib/strains'
-import { HoloLogo } from './holo-logo'
 
 /**
  * Renders a strain's logo lockup on its nug bed. Falls back to a typographic
@@ -12,8 +12,10 @@ import { HoloLogo } from './holo-logo'
  * each strain carries an `artScale` that equalises rendered area — without it
  * VerZace reads as half the size of MAC1 on the same panel.
  *
- * The logo itself is wrapped in <HoloLogo>, which lays Pokemon-card foil over
- * the artwork masked to its own silhouette. See that file for the technique.
+ * The lockup used to be wrapped in a <HoloLogo> that laid Pokemon-card foil
+ * over it — a pointer-tracked 3D tilt plus a color-dodge sparkle masked to the
+ * artwork's own silhouette. That is gone; the logo is now drawn plainly. Only
+ * the contact shadows remain, and they still need the panel-awareness below.
  *
  * TODO(assets): the nug bed is currently CSS. When tray photography exists,
  * drop it at /public/strains/<slug>-nugs.webp and render it in the marked
@@ -33,22 +35,16 @@ export function StrainArt({ strain }: { strain: Strain }) {
   const { theme } = strain
 
   /**
-   * Both holo layers darken semi-transparent artwork — the drop-shadow casts
-   * black behind it, and `color-dodge` inside an isolated group blends against
-   * transparent black. On the dark panels the whole set used to live on, that
-   * is invisible. On a light one it is not: Bacio Gelato's lockup is a quarter
-   * cloud at 50% alpha, and the two layers together cost it ~27 levels of
-   * lightness, which reads as the clouds turning grey against the pink.
-   *
-   * So the effect is scaled to the panel rather than being fixed. Measured on
-   * Bacio: the cloud composites to (234,197,208) with no effects at all, and
-   * these values hold it near that instead of dragging it to (197,157,167).
+   * Both shadows below sit BEHIND the artwork, so anything semi-transparent
+   * shows them through and is darkened by them. On a dark panel that costs
+   * nothing; on a light one it is obvious. Bacio Gelato's lockup is a quarter
+   * cloud at 50% alpha, and at the original fixed values the shadows read as
+   * the clouds turning grey against the pink.
    *
    * The threshold is 0.30 and NOT the obvious 0.5, which silently did nothing:
-   * Bacio's pink measures 0.495. The panels actually split into two clusters
-   * with a wide gap — the six dark ones top out at 0.156 (Aloha Sugar) while
-   * the two light ones are 0.495 and 0.707 (Biscotti) — so 0.30 sits in the
-   * middle of that gap rather than on the edge of a cluster.
+   * Bacio's pink measures 0.495. The panels split into two clusters with a wide
+   * gap — six dark ones topping out at 0.156, two light ones at 0.495 and 0.707
+   * — so 0.30 sits in the middle of that gap rather than on a cluster edge.
    */
   const light = luminance(theme.bg) > 0.3
 
@@ -77,12 +73,18 @@ export function StrainArt({ strain }: { strain: Strain }) {
           className="relative z-10 h-full w-full"
           style={{ transform: `scale(${strain.artScale})` }}
         >
-          <HoloLogo
+          <Image
             src={strain.image_url}
             alt={`${strain.name} strain logo`}
+            fill
+            sizes="(max-width: 768px) 66vw, 34vw"
             priority={strain.sort_order <= 2}
-            shadow={light ? '0 12px 24px rgba(0,0,0,0.13)' : '0 20px 38px rgba(0,0,0,0.42)'}
-            sparkle={light ? 0.16 : 0.42}
+            className="object-contain"
+            style={{
+              filter: light
+                ? 'drop-shadow(0 12px 24px rgba(0,0,0,0.13))'
+                : 'drop-shadow(0 20px 38px rgba(0,0,0,0.42))',
+            }}
           />
         </div>
       ) : (

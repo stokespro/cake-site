@@ -180,37 +180,6 @@ body {
   }
 }
 
-/* ---- idle state for <HoloLogo>: keeps the foil alive without a pointer
-   (touch devices, or cursor elsewhere). Mirrors the "animated" class in the
-   original Pokemon-card pen. ---- */
-@keyframes holo-idle-tilt {
-  0%,
-  100% {
-    transform: rotateX(5deg) rotateY(-9deg);
-  }
-  25% {
-    transform: rotateX(-4deg) rotateY(6deg);
-  }
-  50% {
-    transform: rotateX(-6deg) rotateY(10deg);
-  }
-  75% {
-    transform: rotateX(3deg) rotateY(-5deg);
-  }
-}
-
-@keyframes holo-idle-sparkle {
-  0%,
-  100% {
-    background-position: 12% 18%;
-    filter: brightness(0.85) contrast(1.45);
-  }
-  50% {
-    background-position: 82% 76%;
-    filter: brightness(1.15) contrast(1.6);
-  }
-}
-
 /* Respect reduced-motion: scroll-linked transforms collapse to static states. */
 @media (prefers-reduced-motion: reduce) {
   html {

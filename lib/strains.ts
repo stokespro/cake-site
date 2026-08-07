@@ -95,9 +95,9 @@ export type StrainBackdrop =
        */
       color: string
       /**
-       * Tint strength. Keep it low: this sits behind the strain name and stats,
-       * and the logo's holo layer blends with `color-dodge`, so a loud backdrop
-       * both hurts text contrast and blows out the foil.
+       * Tint strength. Keep it low — this sits behind the strain name and the
+       * stats, and the inactive name stack is only 13-16% opacity, so a loud
+       * backdrop costs legibility before it buys anything.
        */
       opacity: number
       /**
@@ -273,13 +273,12 @@ export const strains: Strain[] = [
     grow_method: 'Indoor',
     availability: 'available',
     badge: null,
-    // -v2 rather than overwriting biscotti.webp. <HoloLogo> loads the artwork
-    // TWICE by different routes — once through next/image (optimised, cached
-    // under .next/cache/images) and once as a raw CSS mask URL (browser cache).
-    // Replacing bytes at a fixed path lets those two caches disagree, and the
-    // logo then renders as a ghosted double image: the old silhouette masked
-    // over the new draw. That is not a dev-only hazard; Vercel restores
-    // .next/cache between builds. A new filename retires both copies at once.
+    // -v2 is HISTORICAL. It was needed when <HoloLogo> loaded the artwork twice
+    // by different routes — once through next/image and once as a raw CSS mask —
+    // because replacing bytes at a fixed path let those two caches disagree into
+    // a ghosted double image. HoloLogo is gone and there is now a single load
+    // path, so that hazard no longer exists; the name is kept only because
+    // renaming back would buy nothing.
     image_url: '/strains/biscotti-v2.webp',
     // Re-derived when the lockup was replaced with the higher-res draw: the new
     // file is 1.61:1 where the old was 2.03:1, and since object-contain is
@@ -406,9 +405,8 @@ export const strains: Strain[] = [
     grow_method: 'Indoor',
     availability: 'available',
     badge: null,
-    // -v2 for the same cache reason as biscotti-v2: <HoloLogo> loads the art
-    // through next/image AND as a raw CSS mask URL, and overwriting a fixed
-    // path lets those two caches disagree into a ghosted double image.
+    // -v2 for the same historical reason as biscotti-v2 — see the note there.
+    // The double-load hazard died with <HoloLogo>; the name is just kept.
     image_url: '/strains/cereal-milk-v2.webp',
     // The replacement is 0.947:1 where the old was 1.115:1 — portrait now. Both
     // sit BELOW the 3:2 box, so object-contain binds on height and rendered

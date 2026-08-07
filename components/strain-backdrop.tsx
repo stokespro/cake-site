@@ -26,8 +26,7 @@ import type { RadialWash, Strain } from '@/lib/strains'
  *
  * The tile is a white silhouette whose ALPHA carries the shape, used as a CSS
  * mask rather than drawn directly — that's what lets one grayscale asset be
- * tinted from the backdrop's own `color`, the same trick as <FlameGrid> and
- * <HoloLogo>.
+ * tinted from the backdrop's own `color`, the same trick as <FlameGrid>.
  *
  * ---- kind: 'scene' (MAC1) ----
  * Full-bleed illustration through next/image, so it gets a srcset and AVIF/WebP
