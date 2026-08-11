@@ -211,12 +211,25 @@ export const strains: Strain[] = [
     featured: true,
     sort_order: 1,
     theme: {
-      bg: '#0E7C6B',
+      // Deepened from #0E7C6B so the scrim has something dark enough to rescue
+      // white copy with. The backdrop is a bright beach — white scores 5.6:1 on
+      // its sky and 5.0:1 on its sea, but only 3.5:1 on the sunset band and
+      // 2.3:1 on the sand, so the scrim is load-bearing here rather than
+      // cosmetic, and it is drawn in theme.bg.
+      bg: '#0A4F52',
       fg: '#FFFFFF',
-      muted: 'rgba(255,255,255,0.14)',
+      muted: 'rgba(255,255,255,0.16)',
       accent: '#8FE8D5',
     },
-    backdrop: null,
+    backdrop: {
+      kind: 'scene',
+      src: '/strains/aloha-sugar-beach.webp',
+      position: '50% 50%',
+      // Lower than the other two scenes. This artwork is the brightest of the
+      // set and its lower half is sand, which white type cannot sit on at all;
+      // muting it toward the teal is what buys that back.
+      opacity: 0.72,
+    },
   },
   {
     id: '2a8be3d3-d928-4775-9bb1-8b3a8ab18727',
