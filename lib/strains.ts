@@ -166,9 +166,24 @@ export type Strain = {
   name: string
   slug: string
   type: StrainType
-  /** Display string for indica/sativa balance, e.g. "60/40". */
+  /**
+   * Indica/sativa balance, e.g. "70/30". The label beneath it is derived from
+   * `type` rather than stored, so the ratio and the word can never disagree.
+   */
   split: string
-  splitLabel: string
+  /**
+   * Potency and terpene ranges, exactly as they should read on the panel —
+   * whole display strings including any % sign, so whatever form the lab
+   * results take ("24-28%", "26%") renders literally.
+   *
+   * NULL UNTIL SUPPLIED, and rendered as an em dash. These are regulated
+   * potency claims on a consumer-facing page: they must come from actual COAs.
+   * Do not fill them with plausible-looking numbers.
+   */
+  thcRange: string | null
+  terpRange: string | null
+  /** Three flavour notes. Empty until supplied; renders as an em dash. */
+  flavors: string[]
   cross: string
   effects: string[]
   grow_method: string
@@ -195,8 +210,10 @@ export const strains: Strain[] = [
     name: 'Aloha Sugar',
     slug: 'aloha-sugar',
     type: 'sativa',
-    split: 'SAT',
-    splitLabel: 'DOMINANT',
+    split: '70/30',
+    thcRange: null,
+    terpRange: null,
+    flavors: [],
     cross: 'Truffaloha × Blueberry Sugar',
     effects: ['Uplifted', 'Energetic', 'Focused'],
     grow_method: 'Indoor',
@@ -237,7 +254,9 @@ export const strains: Strain[] = [
     slug: 'cake-runtz',
     type: 'hybrid',
     split: '50/50',
-    splitLabel: 'HYBRID',
+    thcRange: null,
+    terpRange: null,
+    flavors: [],
     cross: 'Gelato × Zkittles',
     effects: ['Relaxed', 'Euphoric', 'Joyful'],
     grow_method: 'Indoor',
@@ -280,7 +299,9 @@ export const strains: Strain[] = [
     slug: 'biscotti',
     type: 'indica',
     split: '60/40',
-    splitLabel: 'INDICA DOM',
+    thcRange: null,
+    terpRange: null,
+    flavors: [],
     cross: 'Gelato 25 × South Florida OG',
     effects: ['Relaxed', 'Euphoric', 'Creative'],
     grow_method: 'Indoor',
@@ -328,7 +349,9 @@ export const strains: Strain[] = [
     slug: 'bubble-bath',
     type: 'indica',
     split: '60/40',
-    splitLabel: 'INDICA DOM',
+    thcRange: null,
+    terpRange: null,
+    flavors: [],
     cross: 'The Soap × Project 4516',
     effects: ['Relaxed', 'Euphoric', 'Happy'],
     grow_method: 'Indoor',
@@ -367,7 +390,9 @@ export const strains: Strain[] = [
     slug: 'bacio-gelato',
     type: 'indica',
     split: '80/20',
-    splitLabel: 'INDICA DOM',
+    thcRange: null,
+    terpRange: null,
+    flavors: [],
     cross: 'Sunset Sherbert × Thin Mint GSC',
     effects: ['Relaxing', 'Euphoric', 'Sedative'],
     grow_method: 'Indoor',
@@ -412,7 +437,9 @@ export const strains: Strain[] = [
     slug: 'cereal-milk',
     type: 'indica',
     split: '60/40',
-    splitLabel: 'INDICA DOM',
+    thcRange: null,
+    terpRange: null,
+    flavors: [],
     cross: 'Thin Mint GSC × Undisclosed',
     effects: ['Joyful', 'Relaxing', 'Euphoric'],
     grow_method: 'Indoor',
@@ -455,7 +482,9 @@ export const strains: Strain[] = [
     slug: 'mac1',
     type: 'hybrid',
     split: '50/50',
-    splitLabel: 'HYBRID',
+    thcRange: null,
+    terpRange: null,
+    flavors: [],
     cross: 'Alien Cookies × Miracle 15',
     effects: ['Uplifted', 'Energetic', 'Euphoric'],
     grow_method: 'Indoor',
@@ -488,7 +517,9 @@ export const strains: Strain[] = [
     slug: 'verzace',
     type: 'indica',
     split: '60/40',
-    splitLabel: 'INDICA DOM',
+    thcRange: null,
+    terpRange: null,
+    flavors: [],
     cross: 'LCG × Zkittlez',
     effects: ['Uplifted', 'Mood Boost', 'Relaxed'],
     grow_method: 'Indoor',

@@ -94,7 +94,7 @@ export function StrainScroller() {
         {/* `relative z-10` is load-bearing: the backdrop is absolutely
             positioned, and a positioned element paints above a static one
             regardless of source order. Without it the motif covers the copy. */}
-        <div className="relative z-10 mx-auto grid h-full max-w-[1600px] grid-cols-1 grid-rows-[minmax(0,1fr)_auto_auto] content-center items-center gap-5 px-5 pb-28 pt-[80px] md:grid-cols-[minmax(0,0.92fr)_minmax(0,1.1fr)_minmax(280px,330px)] md:grid-rows-1 md:gap-8 md:px-10 md:pb-16 md:pt-[88px] md:pl-[126px] lg:gap-12">
+        <div className="relative z-10 mx-auto grid h-full max-w-[1600px] grid-cols-1 grid-rows-[minmax(0,1fr)_auto_auto] content-center items-center gap-5 px-5 pb-28 pt-[80px] md:grid-cols-[minmax(0,0.9fr)_minmax(0,1.05fr)_minmax(310px,370px)] md:grid-rows-1 md:gap-8 md:px-10 md:pb-16 md:pt-[88px] md:pl-[126px] lg:gap-12">
           {/* --- art --- */}
           <div className="relative flex min-h-0 items-center justify-center">
             <AnimatePresence mode="wait">
@@ -182,18 +182,22 @@ export function StrainScroller() {
                   </span>
                 )}
 
+                {/* The trio describes the STRAIN, not the packaging. "3.5 G
+                    PREMIUM" and "32 CT PER CASE" used to sit here and said
+                    nothing about what is in the jar. The label under the ratio
+                    is derived from `type` so the two can never disagree. */}
                 <div className="grid grid-cols-3 gap-4 md:gap-5">
-                  <Stat value={active.split} label={active.splitLabel} theme={theme} />
-                  <Stat value="3.5" unit="G" label="PREMIUM" theme={theme} />
-                  <Stat value="32" unit="CT" label="PER CASE" theme={theme} />
+                  <Stat value={active.split} label={active.type.toUpperCase()} theme={theme} />
+                  <Stat value={active.thcRange ?? '—'} label="THC" theme={theme} />
+                  <Stat value={active.terpRange ?? '—'} label="TERPS" theme={theme} />
                 </div>
 
                 <dl className="mt-6 space-y-2.5 md:mt-8 md:space-y-3.5">
                   <Row label="CROSS" value={active.cross} theme={theme} />
                   <Row label="EFFECTS" value={active.effects.join(', ')} theme={theme} />
                   <Row
-                    label="GROWN"
-                    value={`${active.grow_method}, Oklahoma`}
+                    label="FLAVOR"
+                    value={active.flavors.length ? active.flavors.join(', ') : '—'}
                     theme={theme}
                     className="hidden md:flex"
                   />
@@ -242,28 +246,39 @@ export function StrainScroller() {
   )
 }
 
+/**
+ * One of the three strain figures.
+ *
+ * SIZED FOR THE LONGEST RANGE, not the shortest. The old values here were
+ * packaging ("3.5", "32") and fit anything; a range like "24.5-28.2%" is ten
+ * characters, and at the previous clamp it overran its column and collided
+ * with the next figure — verified, not theorised.
+ *
+ * The column is ~96px at the widest desktop layout and Archivo 900 at 118%
+ * width runs about 0.62em per digit, so ten characters need roughly 6.2em and
+ * the ceiling has to sit near 1rem. That makes the short values ("70/30")
+ * smaller than they strictly need to be, which is the right trade: a stat row
+ * wants one consistent size, and the alternative is a figure that breaks the
+ * moment a two-decimal COA arrives.
+ *
+ * Deliberately NOT truncated. These are potency figures — a clipped "24.5-2…"
+ * is worse than small type.
+ */
 function Stat({
   value,
-  unit,
   label,
   theme,
 }: {
   value: string
-  unit?: string
   label: string
   theme: { fg: string; muted: string }
 }) {
   return (
-    <div className="min-w-0">
+    <div className="min-w-0 [container-type:inline-size]">
       <div className="flex items-start gap-1">
-        <span className="display truncate text-[clamp(1.15rem,1.75vw,1.85rem)] leading-none">
+        <span className="display whitespace-nowrap text-[min(1.3rem,13.5cqw)] leading-none">
           {value}
         </span>
-        {unit && (
-          <span className="micro shrink-0 pt-[3px] text-[8px]" style={{ color: `${theme.fg}90` }}>
-            {unit}
-          </span>
-        )}
       </div>
       <div className="mt-2 h-px w-full" style={{ backgroundColor: `${theme.fg}33` }} />
       <div className="micro mt-2 text-[8.5px]" style={{ color: `${theme.fg}80` }}>
