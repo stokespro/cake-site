@@ -17,8 +17,14 @@
  *     .order('sort_order')
  *
  * NOTE FOR CLAUDE CODE:
- *  - `Aloha Sugar` is NOT yet in the strains table. Insert it before wiring
- *    this page to Supabase, or the section will render 7 of 8.
+ *  - Aloha Sugar IS in the strains table now, and is the only row populated:
+ *    thc_min/max, terpene_min/max, flavor_notes, effects, lineage, logo_url
+ *    and background_url are filled for it and null for the other seven. Its
+ *    values here were copied from there.
+ *  - DO NOT swap this file for a live query yet. Seven rows are empty, seven
+ *    are typed 'hybrid' (wrong for the five indicas), all eight share
+ *    sort_order 0 so the ordering above would be lost, and there is no column
+ *    for the indica/sativa RATIO at all — `split` exists only here.
  *  - `theme` is presentation-only and is not a DB column. Either keep this
  *    file as a theme map keyed by slug, or add a jsonb `theme` column.
  */
@@ -211,9 +217,11 @@ export const strains: Strain[] = [
     slug: 'aloha-sugar',
     type: 'sativa',
     split: '70/30',
-    thcRange: null,
-    terpRange: null,
-    flavors: [],
+    // From Supabase: thc_min/max 26/29, terpene_min/max 2.6/3.2, flavor_notes
+    // "Pineapple, citrus, sweet sugar" (title-cased to match `effects`).
+    thcRange: '26-29%',
+    terpRange: '2.6-3.2%',
+    flavors: ['Pineapple', 'Citrus', 'Sweet Sugar'],
     cross: 'Truffaloha × Blueberry Sugar',
     effects: ['Uplifted', 'Energetic', 'Focused'],
     grow_method: 'Indoor',
