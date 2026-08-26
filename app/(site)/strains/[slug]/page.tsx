@@ -2,6 +2,8 @@ import { notFound } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
+import { isActive } from '@/lib/availability';
+import { normalizeStrain } from '@/lib/strain-fields';
 import { Strain, StrainBatch } from '@/lib/types';
 import { formatDate, formatPercent } from '@/lib/utils';
 
@@ -15,7 +17,21 @@ async function getStrain(slug: string): Promise<Strain | null> {
     .single();
 
   if (error || !data) return null;
-  return data;
+
+  // The cast is load-bearing, not cosmetic. lib/types.ts hand-rolls `Database`
+  // without the Views/Functions/Enums keys supabase-js v2's generic expects, so
+  // every row off `.from('strains')` resolves to `never`. Existing code never
+  // hit it because `return data` accepts `never` silently; reading a property
+  // off it does not. Worth fixing at the type, but not from inside this page.
+  const strain = data as Strain;
+
+  // An inactive strain has no page, not a page that says it is unavailable.
+  // Without this the row is unreachable from the listing but still served on a
+  // direct URL, which is the same leak by a different route.
+  if (!isActive(strain.availability)) return null;
+
+  // effects/flavor_notes are TEXT in Postgres but consumed as arrays.
+  return normalizeStrain(strain);
 }
 
 async function getStrainBatches(strainId: string): Promise<StrainBatch[]> {

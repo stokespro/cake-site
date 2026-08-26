@@ -6,10 +6,12 @@ export interface Strain {
   thc_percent: number | null;
   cbd_percent: number | null;
   description: string | null;
+  /** TEXT in Postgres. Run rows through normalizeStrain() before use. */
   effects: string[] | null;
   lineage: string | null;
   tagline: string | null;
   badge: string | null;
+  /** TEXT in Postgres. Run rows through normalizeStrain() before use. */
   flavor_notes: string[] | null;
   grow_method: string | null;
   harvest_date: string | null;

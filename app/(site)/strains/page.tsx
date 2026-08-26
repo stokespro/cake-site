@@ -1,6 +1,8 @@
 import { Metadata } from 'next';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
+import { ACTIVE_AVAILABILITY } from '@/lib/availability';
+import { normalizeStrain } from '@/lib/strain-fields';
 import { Strain } from '@/lib/types';
 import { StrainCard } from '@/components/StrainCard';
 
@@ -16,6 +18,10 @@ async function getStrains(): Promise<Strain[]> {
   const { data, error } = await supabase
     .from('strains')
     .select('*')
+    // Only active strains reach the site. This page previously rendered every
+    // row regardless of availability, so a sold-out strain was still listed.
+    // See lib/availability.ts — that list is the single source of the policy.
+    .in('availability', ACTIVE_AVAILABILITY as unknown as string[])
     .order('sort_order', { ascending: true })
     .order('name', { ascending: true });
 
@@ -24,7 +30,8 @@ async function getStrains(): Promise<Strain[]> {
     return [];
   }
 
-  return data || [];
+  // effects/flavor_notes are TEXT in Postgres but consumed as arrays.
+  return (data || []).map(normalizeStrain);
 }
 
 export default async function StrainsPage() {
